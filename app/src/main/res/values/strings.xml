@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MuteControl</string>
+    <string name="mute">mute</string>
+    <string name="unmute">unmute</string>
+    <string name="dialog_message">To use Service Finder you must have WiFi connected</string>
+    <string name="dialog_title">WiFi not connected</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="lock_screen">Lock Screen</string>
+    <string name="unlock_screen">UnLock Screen</string>
+</resources>
