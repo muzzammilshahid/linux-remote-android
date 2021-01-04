@@ -1,6 +1,7 @@
 package com.example.mutecontrol;
 
 import android.app.Activity;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -24,6 +26,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
         this.dataModels = dataModels;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -43,7 +46,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
 //        Service mdatamodels = services.get(position);
 //        viewHolder.totalTypes.setText("" + dataModels.get(getItem(position)).get(position).getPort());
         viewHolder.type.setText("" + dataModels.get(getItem(position)).get(position).getHostName());
-        System.out.println("This"+dataModels);
+        System.out.println("This"+dataModels.get(getItem(position)).get(position).getHostIP());
 
         convertView.setFocusable(false);
         return convertView;

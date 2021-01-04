@@ -74,29 +74,29 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
         mListeners.remove(listener);
     }
 
-    public void discoverAll() {
-        if (mPendingType != PENDING_TYPE_NONE) {
-            return;
-        }
-        if (mWiFi.hasIP()) {
-            discoverAll(mWiFi.getIP());
-        } else {
-            mPendingType = PENDING_TYPE_ALL;
-        }
-    }
+//    public void discoverAll() {
+//        if (mPendingType != PENDING_TYPE_NONE) {
+//            return;
+//        }
+//        if (mWiFi.hasIP()) {
+//            discoverAll(mWiFi.getIP());
+//        } else {
+//            mPendingType = PENDING_TYPE_ALL;
+//        }
+//    }
 
-    private void discoverAll(String ip) {
-        mExecutor.submit(() -> {
-            try {
-                grabMulticastLock();
-                mDNS = JmDNS.create(InetAddress.getByName(ip), getClass().getName());
-                mDNS.addServiceTypeListener(this);
-            } catch (IOException e) {
-                releaseMulticastLock();
-                e.printStackTrace();
-            }
-        });
-    }
+//    private void discoverAll(String ip) {
+//        mExecutor.submit(() -> {
+//            try {
+//                grabMulticastLock();
+//                mDNS = JmDNS.create(InetAddress.getByName(ip), getClass().getName());
+//                mDNS.addServiceTypeListener(this);
+//            } catch (IOException e) {
+//                releaseMulticastLock();
+//                e.printStackTrace();
+//            }
+//        });
+//    }
 
     public void discover(String type) {
         if (mPendingType != PENDING_TYPE_NONE) {
@@ -137,9 +137,10 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
     public void onConnect(String ip) {
         if (mPendingType == PENDING_TYPE_ONE) {
             discover(mQueuedType, ip);
-        } else if (mPendingType == PENDING_TYPE_ALL) {
-            discoverAll(ip);
         }
+//        else if (mPendingType == PENDING_TYPE_ALL) {
+//            discoverAll(ip);
+//        }
         mPendingType = PENDING_TYPE_NONE;
     }
 

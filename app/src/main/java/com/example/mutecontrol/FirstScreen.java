@@ -46,6 +46,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         mListView.setAdapter(myAdapter);
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Looking for services...");
+        progressDialog.show();
         mFinder = new ServiceFinder(getApplicationContext());
         mFinder.addServiceListener((ServiceFinder.ServiceListener) this);
 //        mFinder.discoverAll();

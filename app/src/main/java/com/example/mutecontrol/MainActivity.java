@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         request.setOnResponseListener(response -> {
             if (response.code == HttpResponse.HTTP_OK) {
                 System.out.println("Success"+ response.text.trim());
+                pb.setVisibility(View.INVISIBLE);
                 if (url.equals("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/unmute")){
                     Picasso.get().load(R.drawable.unmute).into(imageView);
                     pb.setVisibility(View.INVISIBLE);
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         request.setOnErrorListener(error -> {
+            pb.setVisibility(View.INVISIBLE);
             System.out.println("Error");
             error.printStackTrace();
             // There was an error, deal with it
@@ -92,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void check(){
-        pb.setVisibility(View.VISIBLE);
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             if (response.code == HttpResponse.HTTP_OK) {
@@ -100,11 +101,9 @@ public class MainActivity extends AppCompatActivity {
                 if (response.text.trim().equals("True")){
                     mute.setText(R.string.unmute);
                     Picasso.get().load(R.drawable.mute).into(imageView);
-                    pb.setVisibility(View.INVISIBLE);
                 } else if (response.text.trim().equals("False")){
                     mute.setText(R.string.mute);
                     Picasso.get().load(R.drawable.unmute).into(imageView);
-                    pb.setVisibility(View.INVISIBLE);
                 }
             }
         });
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             check();
-            h2.postDelayed(r2,5000);
+            h2.postDelayed(r2,500);
         }
     };
     Handler h2=new Handler();
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        h2.postDelayed(r2,5000);
+        h2.postDelayed(r2,500);
     }
 
     @Override
