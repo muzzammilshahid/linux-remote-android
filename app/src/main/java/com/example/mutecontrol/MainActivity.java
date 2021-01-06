@@ -1,5 +1,6 @@
 package com.example.mutecontrol;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -8,7 +9,7 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.material.button.MaterialButton;
+import com.ornach.nobobutton.NoboButton;
 import com.squareup.picasso.Picasso;
 
 import pk.codebase.requests.HttpRequest;
@@ -16,8 +17,8 @@ import pk.codebase.requests.HttpResponse;
 
 public class MainActivity extends AppCompatActivity {
 
-    MaterialButton mute,lock,unlock;
-    ImageView imageView;
+    NoboButton mute,screenShot,lock,unlock;
+    ImageView imageView,imageViewScreenshot;
     ProgressBar pb;
 
     @Override
@@ -31,6 +32,12 @@ public class MainActivity extends AppCompatActivity {
         pb = findViewById(R.id.pb);
         lock = findViewById(R.id.lock);
         unlock = findViewById(R.id.unlock);
+        screenShot = findViewById(R.id.btn_screenshot);
+        imageViewScreenshot = findViewById(R.id.iv_screenshot);
+        imageViewScreenshot.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,ImageFullscreen.class);
+            startActivity(intent);
+        });
 
         mute.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
@@ -47,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
             requestData("http://" + getIntent().getStringExtra("ip") + ":5000/api/volume/unlock");
         });
         check();
+
+        screenShot.setOnClickListener(v -> Picasso.get().load("https://blog.malwarebytes.com/wp-content/uploads/2017/07/shutterstock_328174601-900x506.jpg").into(imageViewScreenshot));
     }
 
     public void requestData(String url){
@@ -80,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println(response.toJSONObject());
                 if (response.text.trim().equals("True")){
                     requestData("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/unmute");
-                    mute.setText(R.string.mute);
+                    mute.setText("Unmute");
                 } else if (response.text.trim().equals("False")){
                     requestData("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/mute");
-                    mute.setText(R.string.unmute);
+                    mute.setText("Mute");
                 }
             }
         });
@@ -99,10 +108,10 @@ public class MainActivity extends AppCompatActivity {
             if (response.code == HttpResponse.HTTP_OK) {
                 System.out.println(response.toJSONObject());
                 if (response.text.trim().equals("True")){
-                    mute.setText(R.string.unmute);
+                    mute.setText("Unmute");
                     Picasso.get().load(R.drawable.mute).into(imageView);
                 } else if (response.text.trim().equals("False")){
-                    mute.setText(R.string.mute);
+                    mute.setText("Mute");
                     Picasso.get().load(R.drawable.unmute).into(imageView);
                 }
             }
