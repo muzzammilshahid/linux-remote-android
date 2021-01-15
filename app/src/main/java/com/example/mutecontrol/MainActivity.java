@@ -1,5 +1,6 @@
 package com.example.mutecontrol;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,9 +18,10 @@ import pk.codebase.requests.HttpResponse;
 
 public class MainActivity extends AppCompatActivity {
 
-    NoboButton mute,screenShot,lock,unlock;
+    NoboButton mute,screenShot,lock;
     ImageView imageView,imageViewScreenshot;
     ProgressBar pb;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
         imageView = findViewById(R.id.iv);
         pb = findViewById(R.id.pb);
         lock = findViewById(R.id.lock);
-        unlock = findViewById(R.id.unlock);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please connect with computer...");
         screenShot = findViewById(R.id.btn_screenshot);
         imageViewScreenshot = findViewById(R.id.iv_screenshot);
         imageViewScreenshot.setOnClickListener(v -> {
@@ -41,19 +45,15 @@ public class MainActivity extends AppCompatActivity {
 
         mute.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            requestsData();
+            requestsData1("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/status");
         });
 
         lock.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            requestData("http://" + getIntent().getStringExtra("ip") + ":5000/api/volume/lock");
+            requestsData1("http://" + getIntent().getStringExtra("ip") + ":5009/api/lock");
         });
 
-        unlock.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
-            requestData("http://" + getIntent().getStringExtra("ip") + ":5000/api/volume/unlock");
-        });
-        check();
+        check("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/status");
 
         screenShot.setOnClickListener(v -> Picasso.get().load("https://blog.malwarebytes.com/wp-content/uploads/2017/07/shutterstock_328174601-900x506.jpg").into(imageViewScreenshot));
     }
@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
             if (response.code == HttpResponse.HTTP_OK) {
                 System.out.println("Success"+ response.text.trim());
                 pb.setVisibility(View.INVISIBLE);
-                if (url.equals("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/unmute")){
+                if (url.equals("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/unmute")){
                     Picasso.get().load(R.drawable.unmute).into(imageView);
                     pb.setVisibility(View.INVISIBLE);
-                } else if (url.equals("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/mute")){
+                } else if (url.equals("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/mute")){
                     Picasso.get().load(R.drawable.mute).into(imageView);
                     pb.setVisibility(View.INVISIBLE);
                 }
@@ -82,51 +82,73 @@ public class MainActivity extends AppCompatActivity {
         request.get(url);
     }
 
-    public void requestsData(){
+    public void requestsData1(String url){
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             if (response.code == HttpResponse.HTTP_OK) {
                 System.out.println(response.toJSONObject());
-                if (response.text.trim().equals("True")){
-                    requestData("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/unmute");
-                    mute.setText("Unmute");
-                } else if (response.text.trim().equals("False")){
-                    requestData("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/mute");
-                    mute.setText("Mute");
+                if (url.equals("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/status")) {
+                    if (response.text.trim().equals("True")) {
+                        requestData("http://" + getIntent().getStringExtra("ip") + ":5009/api/volume/unmute");
+                    } else if (response.text.trim().equals("False")) {
+                        requestData("http://" + getIntent().getStringExtra("ip") + ":5009/api/volume/mute");
+                    }
+                }
+                else if (url.equals("http://" + getIntent().getStringExtra("ip") + ":5009/api/lock")){
+                    if (response.text.trim().equals("False")){
+                        requestData("http://" + getIntent().getStringExtra("ip") + ":5009/api/volume/lock");
+                    } else if (response.text.trim().equals("True")){
+                        requestData("http://" + getIntent().getStringExtra("ip") + ":5009/api/volume/unlock");
+                    }
                 }
             }
         });
         request.setOnErrorListener(error -> {
+            System.out.println("Error");
             // There was an error, deal with it
         });
-        request.get("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/status");
+        request.get(url);
     }
 
-    public void check(){
+    public void check(String url){
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             if (response.code == HttpResponse.HTTP_OK) {
+                progressDialog.dismiss();
                 System.out.println(response.toJSONObject());
-                if (response.text.trim().equals("True")){
-                    mute.setText("Unmute");
-                    Picasso.get().load(R.drawable.mute).into(imageView);
-                } else if (response.text.trim().equals("False")){
-                    mute.setText("Mute");
-                    Picasso.get().load(R.drawable.unmute).into(imageView);
+                if (url.equals("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/status")){
+                    if (response.text.trim().equals("True")){
+                        mute.setText("Unmute");
+                        Picasso.get().load(R.drawable.mute).into(imageView);
+                    } else if (response.text.trim().equals("False")){
+                        mute.setText("Mute");
+                        Picasso.get().load(R.drawable.unmute).into(imageView);
+                    }
+                } else if (url.equals("http://" + getIntent().getStringExtra("ip") + ":5009/api/lock")) {
+                    if (response.text.trim().equals("False")){
+                        lock.setText("Lock Screen");
+                        pb.setVisibility(View.INVISIBLE);
+                    } else if (response.text.trim().equals("True")){
+                        lock.setText("Unlock Screen");
+                        pb.setVisibility(View.INVISIBLE);
+                    }
                 }
             }
         });
         request.setOnErrorListener(error -> {
+            progressDialog.show();
+            System.out.println("Error");
             // There was an error, deal with it
         });
-        request.get("http://"+getIntent().getStringExtra("ip")+":5000/api/volume/status");
+        request.get(url);
     }
 
     Runnable r2=new Runnable() {
         @Override
         public void run() {
-            check();
-            h2.postDelayed(r2,500);
+            check("http://"+getIntent().getStringExtra("ip")+":5009/api/volume/status");
+            check("http://" + getIntent().getStringExtra("ip") + ":5009/api/lock");
+            h2.postDelayed(r2,100);
         }
     };
     Handler h2=new Handler();
@@ -134,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        h2.postDelayed(r2,500);
+        h2.postDelayed(r2,100);
     }
 
     @Override
