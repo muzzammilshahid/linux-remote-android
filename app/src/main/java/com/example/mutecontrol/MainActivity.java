@@ -42,14 +42,6 @@ public class MainActivity extends AppCompatActivity {
             openLink(link);
         }
 
-
-
-//        System.out.println("This"+getIntent().getStringExtra("ip"));
-//        System.out.println("This"+getIntent().getStringExtra("port"));
-//        System.out.println("This  http://"+getIntent().getStringExtra("ip")+":5009/api/volume");
-//        System.out.println("This is  http://"+getIntent().getStringExtra("ip")+":"+getIntent().getStringExtra("port")+"/api/volume");
-
-
         mute = findViewById(R.id.mutebtn);
         imageView = findViewById(R.id.iv);
         pb = findViewById(R.id.pb);
@@ -69,20 +61,20 @@ public class MainActivity extends AppCompatActivity {
             pb.setVisibility(View.VISIBLE);
             if (mute.getText().trim().equals("Mute")){
                 setMute();
+            } else {
+                setUnMute();
             }
-            setUnMute();
         });
 
         lock.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
             if (lock.getText().trim().equals("Lock Screen")){
                 setLock();
+            } else {
+                setUnLock();
             }
-            setUnLock();
         });
 
-        isMute();
-        isLocked();
 
         screenShot.setOnClickListener(v -> Picasso.get()
                 .load("https://blog.malwarebytes.com/wp-content/uploads/2017/07/shutterstock_328174601-900x506.jpg")
