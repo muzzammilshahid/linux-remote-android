@@ -30,17 +30,19 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     private ProgressDialog progressDialog;
     private int selectedPosition = -1;
     private boolean foreground = false;
+    String sharedText;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_screen);
         mWiFi = new WiFi(getApplicationContext());
-        mWiFi.addStateListener((WiFi.StateListener) this);
+        mWiFi.addStateListener(this);
         mWiFi.trackState();
         mDialog = createDialog();
         mListView = findViewById(R.id.listview);
-        mListView.setOnItemClickListener((AdapterView.OnItemClickListener) this);
+        mListView.setOnItemClickListener(this);
         listHashMap = new HashMap<>();
         myAdapter = new TypeAdapter(this, listHashMap);
         mListView.setAdapter(myAdapter);
@@ -49,13 +51,29 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         progressDialog.setMessage("Looking for services...");
         progressDialog.show();
         mFinder = new ServiceFinder(getApplicationContext());
-        mFinder.addServiceListener((ServiceFinder.ServiceListener) this);
+        mFinder.addServiceListener(this);
 //        mFinder.discoverAll();
         mFinder.discover("_http._tcp.local.");
+
+
+
+
+
+
+
+        Intent intent1 = getIntent();
+        String action = intent1.getAction();
+        String type = intent1.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            sharedText = intent1.getStringExtra(Intent.EXTRA_TEXT);
+            System.out.println("This iss" + sharedText);
+        }
     }
 
     private AlertDialog createDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
         builder.setMessage(R.string.dialog_message).setTitle(R.string.dialog_title);
         builder.setNegativeButton(R.string.ok, (dialog, id) -> finish());
         return builder.create();
@@ -122,7 +140,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onDestroy() {
-        mFinder.removeServiceListener((ServiceFinder.ServiceListener) this);
+        mFinder.removeServiceListener(this);
         mFinder.cleanup();
         super.onDestroy();
     }
@@ -142,9 +160,29 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         selectedPosition = position;
         ArrayList<Service> services = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
         Service mdatamodels = services.get(position);
-        System.out.println("This"+services.get(position));
+        System.out.println("This"+mdatamodels.getPort());
+        int port = mdatamodels.getPort();
         Intent intent = new Intent(FirstScreen.this,MainActivity.class);
         intent.putExtra("ip", mdatamodels.getHostIP());
+        intent.putExtra("port",String.valueOf(port));
+        intent.putExtra("link",sharedText);
         startActivity(intent);
-    }
+
+//        Intent intent1 = getIntent();
+//        String action = intent1.getAction();
+//        String type = intent1.getType();
+//
+//        if (Intent.ACTION_SEND.equals(action) && type != null) {
+//            String sharedText = intent1.getStringExtra(Intent.EXTRA_TEXT);
+//            System.out.println("This iss"+sharedText);
+//            if (sharedText != null) {
+//                Intent intent2 = new Intent(FirstScreen.this,MainActivity.class);
+//                intent2.putExtra("ip", mdatamodels.getHostIP());
+//                intent2.putExtra("port",String.valueOf(port));
+//                intent2.putExtra("url",sharedText);
+//                startActivity(intent);
+//                // Update UI to reflect text being shared
+//            }
+//        }
+     }
 }
