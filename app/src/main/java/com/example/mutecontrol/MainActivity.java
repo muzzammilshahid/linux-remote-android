@@ -10,8 +10,9 @@ import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ornach.nobobutton.NoboButton;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -22,8 +23,8 @@ import pk.codebase.requests.HttpRequest;
 
 public class MainActivity extends AppCompatActivity {
 
-    NoboButton mute,screenShot,lock;
-    ImageView imageView,imageViewScreenshot;
+    NoboButton mute, screenShot, lock;
+    ImageView imageView, imageViewScreenshot;
     ProgressBar pb;
     ProgressDialog progressDialog;
     String url;
@@ -35,10 +36,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        url = "http://"+getIntent().getStringExtra("ip")+":"+getIntent().getStringExtra("port")+"/api/";
+        url = "http://" + getIntent().getStringExtra("ip") + ":" + getIntent().getStringExtra("port") + "/api/";
 
         link = getIntent().getStringExtra("link");
-        if (link!=null){
+        if (link != null) {
             openLink(link);
         }
 
@@ -52,14 +53,15 @@ public class MainActivity extends AppCompatActivity {
         screenShot = findViewById(R.id.btn_screenshot);
         imageViewScreenshot = findViewById(R.id.iv_screenshot);
         imageViewScreenshot.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this,ImageFullscreen.class);
+            Intent intent = new Intent(MainActivity.this, ImageFullscreen.class);
+            intent.putExtra("url",url);
             startActivity(intent);
         });
 
 
         mute.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            if (mute.getText().trim().equals("Mute")){
+            if (mute.getText().trim().equals("Mute")) {
                 setMute();
             } else {
                 setUnMute();
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         lock.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            if (lock.getText().trim().equals("Lock Screen")){
+            if (lock.getText().trim().equals("Lock Screen")) {
                 setLock();
             } else {
                 setUnLock();
@@ -76,21 +78,36 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-        screenShot.setOnClickListener(v -> Picasso.get()
-                .load("https://blog.malwarebytes.com/wp-content/uploads/2017/07/shutterstock_328174601-900x506.jpg")
-                .into(imageViewScreenshot));
+        screenShot.setOnClickListener(v -> {
+            Glide.with(this)
+                    .load(url+"screenshot")
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(imageViewScreenshot);
+//            Picasso.get().load(url+"screenshot").into(imageViewScreenshot);
+        });
     }
 
+
+//    private void screenShot(){
+//        HttpRequest request = new HttpRequest();
+//        request.setOnResponseListener(response -> {
+//
+//        });
+//
+//
+//        request.get(url+"screenshot");
+//    }
     private void isMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             JSONObject state = response.toJSONObject();
             progressDialog.dismiss();
             if (state.optBoolean("is_muted")) {
-                Picasso.get().load(R.drawable.mute).into(imageView);
+                Glide.with(this).load(R.drawable.mute).into(imageView);
                 mute.setText("Unmute");
             } else {
-                Picasso.get().load(R.drawable.unmute).into(imageView);
+                Glide.with(this).load(R.drawable.unmute).into(imageView);
                 mute.setText("Mute");
             }
         });
