@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MuteControl"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ImageFullscreen"/>
+        <activity android:name=".MicActivity"></activity>
+        <activity android:name=".SoundActivity" />
+        <activity android:name=".ImageFullscreen" />
         <activity android:name=".FirstScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,11 +26,13 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" ></activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

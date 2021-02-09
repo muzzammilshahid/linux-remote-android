@@ -5,13 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ornach.nobobutton.NoboButton;
 
 import org.json.JSONObject;
@@ -23,8 +20,7 @@ import pk.codebase.requests.HttpRequest;
 
 public class MainActivity extends AppCompatActivity {
 
-    NoboButton mute, screenShot, lock;
-    ImageView imageView, imageViewScreenshot;
+    NoboButton soundControl, micBtn, showScreen, lock;
     ProgressBar pb;
     ProgressDialog progressDialog;
     String url;
@@ -35,37 +31,39 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         url = "http://" + getIntent().getStringExtra("ip") + ":" + getIntent().getStringExtra("port") + "/api/";
+
+        pb = findViewById(R.id.pb);
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please connect with computer...");
+
+        soundControl = findViewById(R.id.sound_btn);
+        micBtn = findViewById(R.id.mic_btn);
+        lock = findViewById(R.id.lock);
+        showScreen = findViewById(R.id.btn_showscreen);
 
         link = getIntent().getStringExtra("link");
         if (link != null) {
             openLink(link);
         }
 
-        mute = findViewById(R.id.mutebtn);
-        imageView = findViewById(R.id.iv);
-        pb = findViewById(R.id.pb);
-        lock = findViewById(R.id.lock);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Please connect with computer...");
-        screenShot = findViewById(R.id.btn_screenshot);
-        imageViewScreenshot = findViewById(R.id.iv_screenshot);
-        imageViewScreenshot.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ImageFullscreen.class);
+        soundControl.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,SoundActivity.class);
             intent.putExtra("url",url);
             startActivity(intent);
         });
 
+        micBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this,MicActivity.class);
+            intent.putExtra("url",url);
+            startActivity(intent);
+        });
 
-        mute.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
-            if (mute.getText().trim().equals("Mute")) {
-                setMute();
-            } else {
-                setUnMute();
-            }
+        showScreen.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, ImageFullscreen.class);
+            intent.putExtra("url",url);
+            startActivity(intent);
         });
 
         lock.setOnClickListener(v -> {
@@ -77,68 +75,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-        screenShot.setOnClickListener(v -> {
-            Glide.with(this)
-                    .load(url+"screenshot")
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .into(imageViewScreenshot);
-//            Picasso.get().load(url+"screenshot").into(imageViewScreenshot);
-        });
     }
 
-
-//    private void screenShot(){
-//        HttpRequest request = new HttpRequest();
-//        request.setOnResponseListener(response -> {
-//
-//        });
-//
-//
-//        request.get(url+"screenshot");
-//    }
-    private void isMute() {
-        HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            JSONObject state = response.toJSONObject();
-            progressDialog.dismiss();
-            if (state.optBoolean("is_muted")) {
-                Glide.with(this).load(R.drawable.mute).into(imageView);
-                mute.setText("Unmute");
-            } else {
-                Glide.with(this).load(R.drawable.unmute).into(imageView);
-                mute.setText("Mute");
-            }
-        });
-        request.setOnErrorListener(error -> progressDialog.show());
-
-        request.get(url+"volume");
-    }
-
-    private void setMute() {
-        HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
-            pb.setVisibility(View.INVISIBLE);
-        });
-
-        Map<String, Integer> data = new HashMap<>();
-        data.put("set_mute", 1);
-        request.post(url+"volume", data);
-    }
-
-    private void setUnMute() {
-        HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
-            pb.setVisibility(View.INVISIBLE);
-        });
-
-        Map<String, Integer> data = new HashMap<>();
-        data.put("set_mute", 0);
-        request.post(url+"volume", data);
-    }
 
     private void isLocked() {
         HttpRequest request = new HttpRequest();
@@ -182,19 +120,17 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("This issssssss"+ link);
         System.out.println("This "+url+"open");
             HttpRequest request = new HttpRequest();
-            request.setOnResponseListener(response -> {
-                System.out.println(response.toJSONObject());
-            });
+            request.setOnResponseListener(response -> System.out.println(response.toJSONObject()));
 
             Map<String, String> data = new HashMap<>();
             data.put("link", link);
             request.post(url+"open", data);
     }
 
+
     Runnable r2=new Runnable() {
         @Override
         public void run() {
-            isMute();
             isLocked();
             h2.postDelayed(r2,100);
         }
