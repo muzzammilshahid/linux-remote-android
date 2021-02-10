@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     String url;
     String link;
+    SeekBar seekBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         soundControl = findViewById(R.id.sound_btn);
         micBtn = findViewById(R.id.mic_btn);
         lock = findViewById(R.id.lock);
+        seekBar= findViewById(R.id.seekBar);
         showScreen = findViewById(R.id.btn_showscreen);
 
         link = getIntent().getStringExtra("link");
@@ -72,6 +75,31 @@ public class MainActivity extends AppCompatActivity {
                 setLock();
             } else {
                 setUnLock();
+            }
+        });
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                String absd = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightnes/"+progress;
+
+                HttpRequest request = new HttpRequest();
+                request.setOnResponseListener(response -> {
+
+                });
+
+                request.get(absd);
+                System.out.println("abcd"+progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                System.out.println("abcd"+"Stopped");
             }
         });
 

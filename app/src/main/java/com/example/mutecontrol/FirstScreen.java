@@ -167,22 +167,5 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         intent.putExtra("port",String.valueOf(port));
         intent.putExtra("link",sharedText);
         startActivity(intent);
-
-//        Intent intent1 = getIntent();
-//        String action = intent1.getAction();
-//        String type = intent1.getType();
-//
-//        if (Intent.ACTION_SEND.equals(action) && type != null) {
-//            String sharedText = intent1.getStringExtra(Intent.EXTRA_TEXT);
-//            System.out.println("This iss"+sharedText);
-//            if (sharedText != null) {
-//                Intent intent2 = new Intent(FirstScreen.this,MainActivity.class);
-//                intent2.putExtra("ip", mdatamodels.getHostIP());
-//                intent2.putExtra("port",String.valueOf(port));
-//                intent2.putExtra("url",sharedText);
-//                startActivity(intent);
-//                // Update UI to reflect text being shared
-//            }
-//        }
      }
 }

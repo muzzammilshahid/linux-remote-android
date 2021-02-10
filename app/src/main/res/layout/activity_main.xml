@@ -11,7 +11,8 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:id="@+id/relative">
         <com.ornach.nobobutton.NoboButton
             android:layout_width="150dp"
             android:layout_height="wrap_content"
@@ -62,6 +63,29 @@
             app:nb_radius="5dp"/>
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/relative"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="40dp">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/brightness_low"/>
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/brightness_high"/>
+    </LinearLayout>
 
     <ProgressBar
         android:layout_width="wrap_content"
