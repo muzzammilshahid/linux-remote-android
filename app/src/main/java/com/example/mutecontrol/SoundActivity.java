@@ -60,7 +60,6 @@ public class SoundActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 setVolume(progress);
-                System.out.println("abcd"+progress);
             }
 
             @Override
@@ -69,7 +68,6 @@ public class SoundActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("abcd"+"Stopped");
             }
         });
     }
@@ -79,7 +77,6 @@ public class SoundActivity extends AppCompatActivity {
     private void setMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             pb.setVisibility(View.INVISIBLE);
         });
 
@@ -91,7 +88,6 @@ public class SoundActivity extends AppCompatActivity {
     private void setUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             pb.setVisibility(View.INVISIBLE);
         });
 

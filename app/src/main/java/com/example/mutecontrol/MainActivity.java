@@ -82,15 +82,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                String absd = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightnes/"+progress;
+                String url = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightnes/"+progress;
 
                 HttpRequest request = new HttpRequest();
                 request.setOnResponseListener(response -> {
 
                 });
 
-                request.get(absd);
-                System.out.println("abcd"+progress);
+                request.get(url);
             }
 
             @Override
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("abcd"+"Stopped");
             }
         });
 
@@ -123,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
     private void setLock() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             pb.setVisibility(View.INVISIBLE);
         });
 
@@ -135,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
     private void setUnLock() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             pb.setVisibility(View.INVISIBLE);
         });
 
@@ -145,8 +141,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openLink(String link){
-            System.out.println("This issssssss"+ link);
-        System.out.println("This "+url+"open");
             HttpRequest request = new HttpRequest();
             request.setOnResponseListener(response -> System.out.println(response.toJSONObject()));
 

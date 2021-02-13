@@ -35,7 +35,6 @@ public class TypeAdapter extends ArrayAdapter<String> {
             convertView = mActivity.getLayoutInflater().inflate(R.layout.types_group, parent,
                     false);
             viewHolder = new ViewHolder();
-//            viewHolder.totalTypes = convertView.findViewById(R.id.type_total);
             viewHolder.type = convertView.findViewById(R.id.type);
             convertView.setTag(viewHolder);
             Log.i("TAG", " creating new");
@@ -43,10 +42,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
             viewHolder = (ViewHolder) convertView.getTag();
             Log.i("TAG", " using old one");
         }
-//        Service mdatamodels = services.get(position);
-//        viewHolder.totalTypes.setText("" + dataModels.get(getItem(position)).get(position).getPort());
         viewHolder.type.setText("" + dataModels.get(getItem(position)).get(position).getHostName());
-        System.out.println("This"+dataModels.get(getItem(position)).get(position).getHostIP());
 
         convertView.setFocusable(false);
         return convertView;
@@ -65,6 +61,5 @@ public class TypeAdapter extends ArrayAdapter<String> {
 
     class ViewHolder{
         TextView type;
-        TextView totalTypes;
     }
 }

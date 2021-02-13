@@ -58,7 +58,6 @@ public class MicActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 setVolume(progress);
-                System.out.println("abcd"+progress);
             }
 
             @Override
@@ -67,7 +66,6 @@ public class MicActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                System.out.println("abcd"+"Stopped");
             }
         });
 
@@ -77,7 +75,6 @@ public class MicActivity extends AppCompatActivity {
     private void setMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             pb.setVisibility(View.INVISIBLE);
             Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
         });
@@ -90,7 +87,6 @@ public class MicActivity extends AppCompatActivity {
     private void setUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println(response.toJSONObject());
             Glide.with(this).load(R.drawable.mic_unmute).into(imageViewMuteStatus);
             pb.setVisibility(View.INVISIBLE);
         });

@@ -1,13 +1,18 @@
 package com.example.mutecontrol;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -17,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import pk.codebase.requests.HttpRequest;
 
 public class FirstScreen extends AppCompatActivity implements ServiceFinder.ServiceListener,
         WiFi.StateListener, AdapterView.OnItemClickListener {
@@ -161,11 +168,65 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         ArrayList<Service> services = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
         Service mdatamodels = services.get(position);
         System.out.println("This"+mdatamodels.getPort());
-        int port = mdatamodels.getPort();
-        Intent intent = new Intent(FirstScreen.this,MainActivity.class);
-        intent.putExtra("ip", mdatamodels.getHostIP());
-        intent.putExtra("port",String.valueOf(port));
-        intent.putExtra("link",sharedText);
-        startActivity(intent);
+        String port = String.valueOf(mdatamodels.getPort());
+        String hostName = mdatamodels.getHostName();
+        String ip = mdatamodels.getHostIP();
+        checkDevice(ip, port, hostName);
+
+     }
+
+     public void getOtp(String ip, String port){
+         HttpRequest request = new HttpRequest();
+         request.setOnResponseListener(response -> Toast.makeText(this, "Check the OTP on your Computer", Toast.LENGTH_SHORT).show());
+
+         request.get("http://" + ip + ":"+port+"/api/pair/");
+     }
+
+     public void checkOtp(String hostName, String otp, String ip, String port, Dialog dialog){
+         HttpRequest request1 = new HttpRequest();
+         request1.setOnResponseListener(response1 -> {
+             if (response1.text.trim().equals("true")){
+                 checkDevice(ip, port, hostName);
+                 dialog.dismiss();
+             }
+             else {
+                 Toast.makeText(this, "OPT is correct", Toast.LENGTH_SHORT).show();
+             }
+         });
+
+         Map<String, String> data1 = new HashMap<>();
+         data1.put("device_id",hostName);
+         data1.put("otp", otp);
+         request1.post("http://" + ip + ":"+port+"/api/pair/", data1);
+     }
+
+
+     public void checkDevice(String ip, String port,String hostName){
+         HttpRequest request = new HttpRequest();
+         request.setOnResponseListener(response -> {
+             System.out.println("abcdef"+response.text);
+             if (response.text.trim().equals("true")){
+                 Intent intent = new Intent(FirstScreen.this,MainActivity.class);
+                 intent.putExtra("ip", ip);
+                 intent.putExtra("port",port);
+                 intent.putExtra("link",sharedText);
+                 startActivity(intent);
+             } else {
+                 getOtp(ip,port);
+                 Dialog dialog = new Dialog(this);
+                 dialog.setContentView(R.layout.dialog_verify);
+                 int width = WindowManager.LayoutParams.MATCH_PARENT;
+                 int height = WindowManager.LayoutParams.WRAP_CONTENT;
+                 dialog.getWindow().setLayout(width,height);
+                 dialog.show();
+                 EditText otp = dialog.findViewById(R.id.otp);
+                 Button verify = dialog.findViewById(R.id.bt_verify);
+                 verify.setOnClickListener(v -> checkOtp(hostName,otp.getText().toString().trim(),ip,port,dialog));
+             }
+         });
+
+         Map<String, String> data = new HashMap<>();
+         data.put("device_id",hostName);
+         request.post("http://" + ip + ":"+port+"/api/verify/", data);
      }
 }
