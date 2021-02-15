@@ -1,10 +1,12 @@
 package com.example.mutecontrol;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,7 +40,9 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     private int selectedPosition = -1;
     private boolean foreground = false;
     String sharedText;
+    String deviceId;
 
+    @SuppressLint("HardwareIds")
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +65,8 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         mFinder.addServiceListener(this);
 //        mFinder.discoverAll();
         mFinder.discover("_http._tcp.local.");
+
+        deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
 
 
 
@@ -167,11 +173,9 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         selectedPosition = position;
         ArrayList<Service> services = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
         Service mdatamodels = services.get(position);
-        System.out.println("This"+mdatamodels.getPort());
         String port = String.valueOf(mdatamodels.getPort());
-        String hostName = mdatamodels.getHostName();
         String ip = mdatamodels.getHostIP();
-        checkDevice(ip, port, hostName);
+        checkDevice(ip, port);
 
      }
 
@@ -182,11 +186,11 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
          request.get("http://" + ip + ":"+port+"/api/pair/");
      }
 
-     public void checkOtp(String hostName, String otp, String ip, String port, Dialog dialog){
+     public void checkOtp(String otp, String ip, String port, Dialog dialog){
          HttpRequest request1 = new HttpRequest();
          request1.setOnResponseListener(response1 -> {
              if (response1.text.trim().equals("true")){
-                 checkDevice(ip, port, hostName);
+                 checkDevice(ip, port);
                  dialog.dismiss();
              }
              else {
@@ -195,16 +199,15 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
          });
 
          Map<String, String> data1 = new HashMap<>();
-         data1.put("device_id",hostName);
+         data1.put("device_id",deviceId);
          data1.put("otp", otp);
          request1.post("http://" + ip + ":"+port+"/api/pair/", data1);
      }
 
 
-     public void checkDevice(String ip, String port,String hostName){
+     public void checkDevice(String ip, String port){
          HttpRequest request = new HttpRequest();
          request.setOnResponseListener(response -> {
-             System.out.println("abcdef"+response.text);
              if (response.text.trim().equals("true")){
                  Intent intent = new Intent(FirstScreen.this,MainActivity.class);
                  intent.putExtra("ip", ip);
@@ -221,12 +224,12 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
                  dialog.show();
                  EditText otp = dialog.findViewById(R.id.otp);
                  Button verify = dialog.findViewById(R.id.bt_verify);
-                 verify.setOnClickListener(v -> checkOtp(hostName,otp.getText().toString().trim(),ip,port,dialog));
+                 verify.setOnClickListener(v -> checkOtp(otp.getText().toString().trim(),ip,port,dialog));
              }
          });
 
          Map<String, String> data = new HashMap<>();
-         data.put("device_id",hostName);
+         data.put("device_id",deviceId);
          request.post("http://" + ip + ":"+port+"/api/verify/", data);
      }
 }
