@@ -42,7 +42,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
             viewHolder = (ViewHolder) convertView.getTag();
             Log.i("TAG", " using old one");
         }
-        viewHolder.type.setText("" + dataModels.get(getItem(position)).get(position).getHostName());
+        viewHolder.type.setText(dataModels.get(getItem(position)).get(position).getHostName());
 
         convertView.setFocusable(false);
         return convertView;

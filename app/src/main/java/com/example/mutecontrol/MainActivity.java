@@ -3,7 +3,6 @@ package com.example.mutecontrol;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -71,11 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
         lock.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            if (lock.getText().trim().equals("Lock Screen")) {
-                setLock();
-            } else {
-                setUnLock();
-            }
+            isLocked();
         });
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -109,9 +104,11 @@ public class MainActivity extends AppCompatActivity {
         request.setOnResponseListener(response -> {
             JSONObject state = response.toJSONObject();
             if (state.optBoolean("is_locked")) {
-                lock.setText("Unlock Screen");
-            } else {
+                setUnLock();
                 lock.setText("Lock Screen");
+            } else {
+                setLock();
+                lock.setText("Unlock Screen");
             }
         });
 
@@ -147,27 +144,5 @@ public class MainActivity extends AppCompatActivity {
             Map<String, String> data = new HashMap<>();
             data.put("link", link);
             request.post(url+"open", data);
-    }
-
-
-    Runnable r2=new Runnable() {
-        @Override
-        public void run() {
-            isLocked();
-            h2.postDelayed(r2,100);
-        }
-    };
-    Handler h2=new Handler();
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        h2.postDelayed(r2,100);
-    }
-
-    @Override
-    protected void onPause() {
-        h2.removeCallbacks(r2);
-        super.onPause();
     }
 }

@@ -2,7 +2,6 @@ package com.example.mutecontrol;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -46,6 +45,7 @@ public class SoundActivity extends AppCompatActivity {
 
         mute.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
+            isMute();
             if (mute.getText().trim().equals("Mute")) {
                 setMute();
             } else {
@@ -54,6 +54,7 @@ public class SoundActivity extends AppCompatActivity {
         });
 
 
+        isMute();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -78,6 +79,8 @@ public class SoundActivity extends AppCompatActivity {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             pb.setVisibility(View.INVISIBLE);
+            Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
+            mute.setText("Unmute");
         });
 
         Map<String, Integer> data = new HashMap<>();
@@ -88,6 +91,8 @@ public class SoundActivity extends AppCompatActivity {
     private void setUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
+            Glide.with(this).load(R.drawable.unmute).into(imageViewMuteStatus);
+            mute.setText("Mute");
             pb.setVisibility(View.INVISIBLE);
         });
 
@@ -122,27 +127,5 @@ public class SoundActivity extends AppCompatActivity {
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);
         request.post(url+"vol", data);
-    }
-
-
-    Runnable r2=new Runnable() {
-        @Override
-        public void run() {
-            isMute();
-            h2.postDelayed(r2,100);
-        }
-    };
-    Handler h2=new Handler();
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        h2.postDelayed(r2,100);
-    }
-
-    @Override
-    protected void onPause() {
-        h2.removeCallbacks(r2);
-        super.onPause();
     }
 }
