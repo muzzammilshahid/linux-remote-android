@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ornach.nobobutton.NoboButton;
@@ -15,13 +16,13 @@ import com.ornach.nobobutton.NoboButton;
 import java.util.HashMap;
 import java.util.Map;
 
+import pk.codebase.requests.HttpError;
 import pk.codebase.requests.HttpRequest;
 
 public class MicActivity extends AppCompatActivity {
 
     NoboButton mute, unmute;
     ImageView imageViewMuteStatus;
-    ProgressDialog progressDialog;
     ProgressBar pb;
     String url;
     SeekBar seekBar;
@@ -35,10 +36,6 @@ public class MicActivity extends AppCompatActivity {
         imageViewMuteStatus = findViewById(R.id.iv_mute_status);
         pb = findViewById(R.id.pb);
         seekBar= findViewById(R.id.seekBar);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Please connect with computer...");
-
         url = getIntent().getStringExtra("url");
 
 
@@ -79,6 +76,7 @@ public class MicActivity extends AppCompatActivity {
             Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
         });
 
+        request.setOnErrorListener(error -> Toast.makeText(MicActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 1);
         request.post(url+"mic/mute", data);
@@ -91,6 +89,7 @@ public class MicActivity extends AppCompatActivity {
             pb.setVisibility(View.INVISIBLE);
         });
 
+        request.setOnErrorListener(error -> Toast.makeText(MicActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 0);
         request.post(url+"mic/mute", data);
@@ -100,7 +99,7 @@ public class MicActivity extends AppCompatActivity {
     private void setVolume(int vol) {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
-        request.setOnErrorListener(error -> System.out.println("This"+error));
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);

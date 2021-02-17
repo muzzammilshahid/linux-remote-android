@@ -20,7 +20,7 @@ public class ImageFullscreen extends AppCompatActivity {
         setContentView(R.layout.activity_image_fullscreen);
         imageView = findViewById(R.id.fullscreen_image);
         refreshBtn = findViewById(R.id.refresh_btn);
-        System.out.println("This   "+getIntent().getStringExtra("url")+"screenshot");
+        
         Glide.with(this).
                 load(getIntent().getStringExtra("url")+"screenshot")
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

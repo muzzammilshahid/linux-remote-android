@@ -1,11 +1,11 @@
 package com.example.mutecontrol;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -23,7 +23,6 @@ public class SoundActivity extends AppCompatActivity {
 
     NoboButton mute;
     ImageView imageViewMuteStatus;
-    ProgressDialog progressDialog;
     ProgressBar pb;
     String url;
     SeekBar seekBar;
@@ -36,9 +35,6 @@ public class SoundActivity extends AppCompatActivity {
         imageViewMuteStatus = findViewById(R.id.iv_mute_status);
         pb = findViewById(R.id.pb);
         seekBar= findViewById(R.id.seekBar);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setCancelable(false);
-        progressDialog.setMessage("Please connect with computer...");
 
         url = getIntent().getStringExtra("url");
 
@@ -83,6 +79,7 @@ public class SoundActivity extends AppCompatActivity {
             mute.setText("Unmute");
         });
 
+        request.setOnErrorListener(error -> Toast.makeText(SoundActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 1);
         request.post(url+"volume", data);
@@ -96,6 +93,7 @@ public class SoundActivity extends AppCompatActivity {
             pb.setVisibility(View.INVISIBLE);
         });
 
+        request.setOnErrorListener(error -> Toast.makeText(SoundActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 0);
         request.post(url+"volume", data);
@@ -105,7 +103,6 @@ public class SoundActivity extends AppCompatActivity {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             JSONObject state = response.toJSONObject();
-            progressDialog.dismiss();
             if (state.optBoolean("is_muted")) {
                 Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
                 mute.setText("Unmute");
@@ -114,7 +111,7 @@ public class SoundActivity extends AppCompatActivity {
                 mute.setText("Mute");
             }
         });
-        request.setOnErrorListener(error -> progressDialog.show());
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
         request.get(url+"volume");
     }
@@ -122,7 +119,7 @@ public class SoundActivity extends AppCompatActivity {
     private void setVolume(int vol) {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
-        request.setOnErrorListener(error -> System.out.println("This"+error));
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);

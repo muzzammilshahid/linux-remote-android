@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
                 });
 
+                request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
                 request.get(url);
             }
 
@@ -111,16 +113,16 @@ public class MainActivity extends AppCompatActivity {
                 lock.setText("Unlock Screen");
             }
         });
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
 
         request.get(url+"lock");
     }
 
     private void setLock() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            pb.setVisibility(View.INVISIBLE);
-        });
+        request.setOnResponseListener(response -> pb.setVisibility(View.INVISIBLE));
 
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_lock", 1);
         request.post(url+"lock", data);
@@ -128,10 +130,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUnLock() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            pb.setVisibility(View.INVISIBLE);
-        });
+        request.setOnResponseListener(response -> pb.setVisibility(View.INVISIBLE));
 
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_lock", 0);
         request.post(url+"lock", data);
@@ -141,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
             HttpRequest request = new HttpRequest();
             request.setOnResponseListener(response -> System.out.println(response.toJSONObject()));
 
+            request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
             Map<String, String> data = new HashMap<>();
             data.put("link", link);
             request.post(url+"open", data);

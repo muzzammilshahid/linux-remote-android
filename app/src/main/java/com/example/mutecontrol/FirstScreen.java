@@ -183,6 +183,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
          HttpRequest request = new HttpRequest();
          request.setOnResponseListener(response -> Toast.makeText(this, "Check the OTP on your Computer", Toast.LENGTH_SHORT).show());
 
+         request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please Connect your computer", Toast.LENGTH_SHORT).show());
          request.get("http://" + ip + ":"+port+"/api/pair/");
      }
 
@@ -198,6 +199,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
              }
          });
 
+         request1.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect your computer", Toast.LENGTH_SHORT).show());
          Map<String, String> data1 = new HashMap<>();
          data1.put("device_id",deviceId);
          data1.put("otp", otp);
@@ -228,6 +230,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
              }
          });
 
+         request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
          Map<String, String> data = new HashMap<>();
          data.put("device_id",deviceId);
          request.post("http://" + ip + ":"+port+"/api/verify/", data);
