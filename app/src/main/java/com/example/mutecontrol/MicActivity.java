@@ -1,8 +1,5 @@
 package com.example.mutecontrol;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,13 +7,14 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.ornach.nobobutton.NoboButton;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import pk.codebase.requests.HttpError;
 import pk.codebase.requests.HttpRequest;
 
 public class MicActivity extends AppCompatActivity {

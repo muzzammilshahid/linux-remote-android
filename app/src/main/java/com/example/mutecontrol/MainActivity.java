@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     NoboButton soundControl, micBtn, showScreen, lock;
     ProgressBar pb;
     ProgressDialog progressDialog;
-    String url;
+    String url, brightnessUrl;
     String link;
     SeekBar seekBar;
 
@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         url = "http://" + getIntent().getStringExtra("ip") + ":" + getIntent().getStringExtra("port") + "/api/";
+        brightnessUrl = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightness";
 
         pb = findViewById(R.id.pb);
         progressDialog = new ProgressDialog(this);
@@ -74,19 +75,13 @@ public class MainActivity extends AppCompatActivity {
             isLocked();
         });
 
+        getBrightness();
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                String url = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightnes/"+progress;
-
-                HttpRequest request = new HttpRequest();
-                request.setOnResponseListener(response -> {
-
-                });
-
-                request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
-                request.get(url);
+                setBrightness(progress);
             }
 
             @Override
@@ -97,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-
     }
 
 
@@ -146,5 +140,23 @@ public class MainActivity extends AppCompatActivity {
             Map<String, String> data = new HashMap<>();
             data.put("link", link);
             request.post(url+"open", data);
+    }
+
+    private void getBrightness(){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> seekBar.setProgress(Integer.parseInt(response.text.trim())));
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        request.get(brightnessUrl);
+    }
+
+    private void setBrightness(int progress){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> System.out.println("Brightness changes"));
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        Map<String,Integer> data = new HashMap<>();
+        data.put("brightness", progress);
+        request.post(brightnessUrl, data);
     }
 }
