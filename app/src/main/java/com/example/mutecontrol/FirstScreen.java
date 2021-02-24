@@ -111,8 +111,20 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onFound(String type, Service service) {
-        System.out.println("Found: " + type + ": " + service.getHostName());
+        System.out.println("Found: " + type + ": " + service.getHostName()+" "+service.getHostIP());
         ArrayList<Service> services = listHashMap.getOrDefault(type, new ArrayList<>());
+
+        for(Service serv :services){
+            if (service.equalsIP(serv.getHostIP())){
+                System.out.println("Found123  "+serv.equalsIP(service.getHostIP())+"      ");
+            }
+        }
+//        if (service.equalsIP(service.getHostIP())){
+//            System.out.println("Found  "+service.equalsIP(service.getHostIP()));
+//            services.add(service);
+//            progressDialog.dismiss();
+//            listHashMap.put(type, services);
+//        }
         services.add(service);
         progressDialog.dismiss();
         listHashMap.put(type, services);
@@ -176,7 +188,6 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         String port = String.valueOf(mdatamodels.getPort());
         String ip = mdatamodels.getHostIP();
         checkDevice(ip, port);
-
      }
 
      public void getOtp(String ip, String port){
@@ -205,6 +216,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
          data1.put("otp", otp);
          request1.post("http://" + ip + ":"+port+"/api/pair/", data1);
      }
+
 
 
      public void checkDevice(String ip, String port){

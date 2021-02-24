@@ -52,6 +52,8 @@ public class SoundActivity extends AppCompatActivity {
 
         isMute();
 
+        currentVolume();
+
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
@@ -124,5 +126,16 @@ public class SoundActivity extends AppCompatActivity {
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);
         request.post(url+"vol", data);
+    }
+
+    private void currentVolume(){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            System.out.println("This" + response.text);
+            seekBar.setProgress(Integer.parseInt(response.text.trim()));
+        });
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+
+        request.get(url+"vol");
     }
 }

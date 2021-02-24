@@ -36,4 +36,11 @@ public class Service implements Serializable {
     public String getProperty(String name) {
         return mProperties.getOrDefault(name, null);
     }
+
+    public boolean equalsIP(String ip){
+        if (ip.equals(mHostIP)){
+            return false;
+        }
+        return true;
+    }
 }
