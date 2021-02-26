@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ornach.nobobutton.NoboButton;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     String url, brightnessUrl;
     String link;
     SeekBar seekBar;
+    TextView percent, plugin, timeRemaining, timeToFull;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,12 @@ public class MainActivity extends AppCompatActivity {
         lock = findViewById(R.id.lock);
         seekBar= findViewById(R.id.seekBar);
         showScreen = findViewById(R.id.btn_showscreen);
+
+        percent = findViewById(R.id.percent);
+        plugin = findViewById(R.id.plugin);
+        timeRemaining = findViewById(R.id.time_remaining);
+        timeToFull = findViewById(R.id.time_to_full);
+
 
         link = getIntent().getStringExtra("link");
         if (link != null) {
@@ -92,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
+
+        getBatteryInfo();
     }
 
 
@@ -158,5 +169,27 @@ public class MainActivity extends AppCompatActivity {
         Map<String,Integer> data = new HashMap<>();
         data.put("brightness", progress);
         request.post(brightnessUrl, data);
+    }
+
+    private void getBatteryInfo(){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            System.out.println("This is"+ response.toJSONObject());
+            JSONObject responseJson = response.toJSONObject();
+            try {
+                if (responseJson.get("plugin_info").equals(true)){
+                    timeToFull.setText("Time to Full: ");
+                }
+                percent.setText(responseJson.get("percentage").toString());
+                plugin.setText(responseJson.get("plugin_info").toString());
+                timeRemaining.setText(responseJson.get("battery_time_left").toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        request.get(url+"battery");
+
     }
 }
