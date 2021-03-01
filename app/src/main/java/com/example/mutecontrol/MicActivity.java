@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.bumptech.glide.Glide;
 import com.ornach.nobobutton.NoboButton;
 
 import java.util.HashMap;
@@ -19,40 +18,40 @@ import pk.codebase.requests.HttpRequest;
 
 public class MicActivity extends AppCompatActivity {
 
-    NoboButton mute, unmute;
+    NoboButton muteMic, unmute;
     ImageView imageViewMuteStatus;
     ProgressBar pb;
     String url;
-    SeekBar seekBar;
+    SeekBar seekBarMic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mic);
 
-        mute = findViewById(R.id.mutebtn);
+        muteMic = findViewById(R.id.mutebtn);
         unmute = findViewById(R.id.unmute_btn);
         imageViewMuteStatus = findViewById(R.id.iv_mute_status);
         pb = findViewById(R.id.pb);
-        seekBar= findViewById(R.id.seekBar);
+        seekBarMic= findViewById(R.id.seekBarMic);
         url = getIntent().getStringExtra("url");
 
 
-        mute.setOnClickListener(v -> {
+        muteMic.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-                setMute();
+                setMicMute();
         });
 
         unmute.setOnClickListener(v -> {
             pb.setVisibility(View.VISIBLE);
-            setUnMute();
+            setMicUnMute();
         });
 
 
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        seekBarMic.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
-                setVolume(progress);
+                setMicVolume(progress);
             }
 
             @Override
@@ -67,11 +66,11 @@ public class MicActivity extends AppCompatActivity {
     }
 
 
-    private void setMute() {
+    private void setMicMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             pb.setVisibility(View.INVISIBLE);
-            Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
+//            Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MicActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
@@ -80,10 +79,10 @@ public class MicActivity extends AppCompatActivity {
         request.post(url+"mic/mute", data);
     }
 
-    private void setUnMute() {
+    private void setMicUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            Glide.with(this).load(R.drawable.mic_unmute).into(imageViewMuteStatus);
+//            Glide.with(this).load(R.drawable.mic_unmute).into(imageViewMuteStatus);
             pb.setVisibility(View.INVISIBLE);
         });
 
@@ -94,7 +93,7 @@ public class MicActivity extends AppCompatActivity {
     }
 
 
-    private void setVolume(int vol) {
+    private void setMicVolume(int vol) {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
         request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());

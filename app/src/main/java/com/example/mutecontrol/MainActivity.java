@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.ornach.nobobutton.NoboButton;
 
 import org.json.JSONException;
@@ -23,12 +24,12 @@ import pk.codebase.requests.HttpRequest;
 
 public class MainActivity extends AppCompatActivity {
 
-    NoboButton soundControl, micBtn, showScreen, lock;
+    NoboButton muteMicBtn, unmuteMicBtn, showScreen, lock, mute;
     ProgressBar pb;
     ProgressDialog progressDialog;
     String url, brightnessUrl;
     String link;
-    SeekBar seekBar;
+    SeekBar seekBar,seekBarSound, seekBarMic;
     TextView percent, plugin, timeRemaining, timeToFull;
 
     @Override
@@ -44,10 +45,14 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Please connect with computer...");
 
-        soundControl = findViewById(R.id.sound_btn);
-        micBtn = findViewById(R.id.mic_btn);
+        mute = findViewById(R.id.mutebtn);
         lock = findViewById(R.id.lock);
+        muteMicBtn = findViewById(R.id.muteMicbtn);
+        unmuteMicBtn = findViewById(R.id.unmuteMicbtn);
         seekBar= findViewById(R.id.seekBar);
+        seekBarSound= findViewById(R.id.seekBarSound);
+        seekBarMic= findViewById(R.id.seekBarMic);
+
         showScreen = findViewById(R.id.btn_showscreen);
 
         percent = findViewById(R.id.percent);
@@ -60,18 +65,6 @@ public class MainActivity extends AppCompatActivity {
         if (link != null) {
             openLink(link);
         }
-
-        soundControl.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this,SoundActivity.class);
-            intent.putExtra("url",url);
-            startActivity(intent);
-        });
-
-        micBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this,MicActivity.class);
-            intent.putExtra("url",url);
-            startActivity(intent);
-        });
 
         showScreen.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ImageFullscreen.class);
@@ -91,6 +84,68 @@ public class MainActivity extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress,
                                           boolean fromUser) {
                 setBrightness(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+
+        mute.setOnClickListener(v -> {
+            pb.setVisibility(View.VISIBLE);
+            isMute();
+            if (mute.getText().trim().equals("Mute")) {
+                setMute();
+            } else {
+                setUnMute();
+            }
+        });
+
+        muteMicBtn.setOnClickListener(v -> {
+            pb.setVisibility(View.VISIBLE);
+            setMicMute();
+        });
+
+        unmuteMicBtn.setOnClickListener(v -> {
+            pb.setVisibility(View.VISIBLE);
+            setMicUnMute();
+        });
+
+
+        isMute();
+
+        currentVolume();
+
+        seekBarMic.setProgress(100);
+
+
+        seekBarSound.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                setVolume(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+
+
+        seekBarMic.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,
+                                          boolean fromUser) {
+                setMicVolume(progress);
             }
 
             @Override
@@ -192,4 +247,111 @@ public class MainActivity extends AppCompatActivity {
         request.get(url+"battery");
 
     }
+
+    private void setMute() {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            pb.setVisibility(View.INVISIBLE);
+//            Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
+            mute.setText("Unmute");
+        });
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        Map<String, Integer> data = new HashMap<>();
+        data.put("set_mute", 1);
+        request.post(url+"volume", data);
+    }
+
+    private void setUnMute() {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+//            Glide.with(this).load(R.drawable.unmute).into(imageViewMuteStatus);
+            mute.setText("Mute");
+            pb.setVisibility(View.INVISIBLE);
+        });
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        Map<String, Integer> data = new HashMap<>();
+        data.put("set_mute", 0);
+        request.post(url+"volume", data);
+    }
+
+    private void isMute() {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            JSONObject state = response.toJSONObject();
+            if (state.optBoolean("is_muted")) {
+
+//                Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
+                mute.setText("Unmute");
+            } else {
+
+                mute.setText("Mute");
+            }
+        });
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+
+        request.get(url+"volume");
+    }
+
+    private void setVolume(int vol) {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+
+        Map<String, Integer> data = new HashMap<>();
+        data.put("volume", vol);
+        request.post(url+"vol", data);
+    }
+
+    private void currentVolume(){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            System.out.println("This" + response.text);
+            seekBarSound.setProgress(Integer.parseInt(response.text.trim()));
+        });
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+
+        request.get(url+"vol");
+    }
+
+
+    private void setMicMute() {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            pb.setVisibility(View.INVISIBLE);
+//            Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
+        });
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+        Map<String, Integer> data = new HashMap<>();
+        data.put("set_mute", 1);
+        request.post(url+"mic/mute", data);
+    }
+
+    private void setMicUnMute() {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+//            Glide.with(this).load(R.drawable.mic_unmute).into(imageViewMuteStatus);
+            pb.setVisibility(View.INVISIBLE);
+        });
+
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+        Map<String, Integer> data = new HashMap<>();
+        data.put("set_mute", 0);
+        request.post(url+"mic/mute", data);
+    }
+
+
+    private void setMicVolume(int vol) {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
+        request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
+
+        Map<String, Integer> data = new HashMap<>();
+        data.put("volume", vol);
+        request.post(url+"mic/vol", data);
+    }
+
+
 }
