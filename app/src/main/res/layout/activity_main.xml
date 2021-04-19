@@ -1,324 +1,347 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f8fcfd"
     tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/linear">
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
+
         <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
                 android:text="Battery Percentage:"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:padding="7dp"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <TextView
+                android:id="@+id/percent"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:padding="7dp"
                 android:singleLine="true"
-                android:id="@+id/percent"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:text="Plugin Info:"
                 android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:id="@+id/plugin"/>
+                android:textSize="16sp"
+                android:textColor="@color/black" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_marginStart="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:text="Time to Empty:"
-                android:id="@+id/time_to_full"
-                android:textStyle="bold"
-                android:textColor="@color/black"/>
-            <TextView
-                android:layout_width="80dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/black"
-                android:id="@+id/time_remaining"/>
-        </LinearLayout>
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            android:orientation="horizontal">-->
 
-</LinearLayout>
+<!--            <TextView-->
+<!--                android:layout_width="150dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Charger Plugin:"-->
+<!--                android:textSize="16sp"-->
+<!--                android:padding="7dp"-->
+<!--                android:textColor="@color/black"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/plugin"-->
+<!--                android:layout_width="80dp"-->
+<!--                android:textSize="16sp"-->
+<!--                android:padding="7dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:textColor="@color/black" />-->
+<!--        </LinearLayout>-->
+
+
+
+    </LinearLayout>
+
     <TextView
+        android:id="@+id/tv_sound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_sound"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/linear"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="#607D8B"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:text="Sound Control"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
         android:textSize="20sp"
-        android:background="#3a779b"
-        android:shadowColor="@color/black"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"/>
+        android:textStyle="bold|italic" />
+
     <LinearLayout
+        android:id="@+id/linear_sound"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_below="@+id/tv_sound"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginTop="15dp"
         android:layout_marginHorizontal="10dp"
-        android:id="@+id/linear_sound">
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <ImageView
+            android:id="@+id/mute_img"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/volume_up"/>
+            android:src="@drawable/volume_up" />
+
         <SeekBar
             android:id="@+id/seekBarSound"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <com.ornach.nobobutton.NoboButton
+        android:id="@+id/mutebtn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        app:nb_text="@string/mute"
         android:layout_below="@+id/linear_sound"
-        android:id="@+id/mutebtn"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
+        app:nb_backgroundColor="#607D8B"
         app:nb_borderColor="#96cfe0"
         app:nb_borderWidth="2dp"
-        app:nb_backgroundColor="#3a779b"
         app:nb_focusColor="#113355"
+        app:nb_radius="5dp"
+        app:nb_text="@string/mute"
         app:nb_textColor="#FFF"
         app:nb_textSize="15sp"
-        app:nb_textStyle="bold"
-        app:nb_radius="5dp"/>
+        app:nb_textStyle="bold" />
 
     <TextView
+        android:id="@+id/tv_mic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_mic"
-        android:layout_centerHorizontal="true"
         android:layout_below="@+id/mutebtn"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:background="#607D8B"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:text="Mic Control"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"
-        android:gravity="center"
-        android:layout_marginTop="25dp"
         android:textSize="20sp"
-        android:background="#3a779b"
-        android:shadowColor="@color/black"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"/>
+        android:textStyle="bold|italic" />
 
     <LinearLayout
+        android:id="@+id/linear_mic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linear_mic"
         android:layout_below="@+id/tv_mic"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <ImageView
+            android:id="@+id/imageView_mic"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/mic_up"/>
+            android:src="@drawable/mic_up" />
+
         <SeekBar
             android:id="@+id/seekBarMic"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linear_Mic_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_below="@+id/linear_mic"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true">
+        android:orientation="horizontal">
+
         <com.ornach.nobobutton.NoboButton
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            app:nb_text="Mute"
             android:id="@+id/muteMicbtn"
-            android:layout_marginHorizontal="20dp"
-            app:nb_borderColor="#96cfe0"
-            app:nb_borderWidth="2dp"
-            app:nb_backgroundColor="#3a779b"
-            app:nb_focusColor="#113355"
-            app:nb_textColor="#FFF"
-            app:nb_textSize="15sp"
-            app:nb_textStyle="bold"
-            app:nb_radius="5dp"/>
-        <com.ornach.nobobutton.NoboButton
             android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            app:nb_text="Unmute"
-            android:id="@+id/unmuteMicbtn"
+            app:nb_backgroundColor="#607D8B"
             app:nb_borderColor="#96cfe0"
             app:nb_borderWidth="2dp"
-            app:nb_backgroundColor="#3a779b"
             app:nb_focusColor="#113355"
+            app:nb_radius="5dp"
+            app:nb_text="Mute"
             app:nb_textColor="#FFF"
             app:nb_textSize="15sp"
-            app:nb_textStyle="bold"
-            app:nb_radius="5dp"/>
+            app:nb_textStyle="bold" />
+
+        <com.ornach.nobobutton.NoboButton
+            android:id="@+id/unmuteMicbtn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            app:nb_backgroundColor="#607D8B"
+            app:nb_borderColor="#96cfe0"
+            app:nb_borderWidth="2dp"
+            app:nb_focusColor="#113355"
+            app:nb_radius="5dp"
+            app:nb_text="Unmute"
+            app:nb_textColor="#FFF"
+            app:nb_textSize="15sp"
+            app:nb_textStyle="bold" />
     </LinearLayout>
 
 
     <TextView
+        android:id="@+id/tv_brightness"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_brightness"
+        android:layout_below="@+id/linear_Mic_btn"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/linear_brightness"
+        android:layout_marginTop="25dp"
+        android:background="#607D8B"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:text="Brightness Control"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"
-        android:gravity="center"
         android:textSize="20sp"
-        android:background="#3a779b"
-        android:shadowColor="@color/black"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"/>
+        android:textStyle="bold|italic" />
+
     <LinearLayout
+        android:id="@+id/linear_brightness"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/linear_brightness"
-        android:layout_above="@+id/tv_Screen"
+        android:layout_below="@+id/tv_brightness"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="25dp">
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/brightness_low"/>
+            android:src="@drawable/brightness_low" />
+
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/brightness_high"/>
+            android:src="@drawable/brightness_high" />
     </LinearLayout>
 
     <TextView
+        android:id="@+id/tv_Screen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_Screen"
+        android:layout_below="@+id/linear_brightness"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/btn_showscreen"
+        android:layout_marginTop="25dp"
+        android:background="#607D8B"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:text="Show Screen"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"
-        android:gravity="center"
         android:textSize="20sp"
-        android:background="#3a779b"
-        android:shadowColor="@color/black"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"/>
+        android:textStyle="bold|italic" />
 
     <com.ornach.nobobutton.NoboButton
+        android:id="@+id/btn_showscreen"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_showscreen"
-        android:layout_marginTop="15dp"
-        android:layout_marginBottom="25dp"
-        android:layout_above="@+id/tv_lockScreen"
+        android:layout_below="@+id/tv_Screen"
         android:layout_centerHorizontal="true"
-        app:nb_text="Show Screen"
+        android:layout_marginTop="15dp"
+        app:nb_backgroundColor="#607D8B"
         app:nb_borderColor="#96cfe0"
         app:nb_borderWidth="2dp"
-        app:nb_backgroundColor="#3a779b"
         app:nb_focusColor="#113355"
+        app:nb_radius="5dp"
+        app:nb_text="Show Screen"
         app:nb_textColor="#FFF"
         app:nb_textSize="15sp"
-        app:nb_textStyle="bold"
-        app:nb_radius="5dp"/>
+        app:nb_textStyle="bold" />
 
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pb"
-        android:layout_centerInParent="true"
-        android:visibility="invisible"/>
+    <!--    <ProgressBar-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:id="@+id/pb"-->
+    <!--        android:layout_centerInParent="true"-->
+    <!--        android:visibility="invisible"/>-->
 
     <TextView
+        android:id="@+id/tv_lockScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_lockScreen"
+        android:layout_below="@+id/btn_showscreen"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/lock"
+        android:layout_marginTop="25dp"
+        android:background="#607D8B"
+        android:gravity="center"
+        android:shadowColor="@color/black"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"
         android:text="Lock/Unlock Screen"
         android:textColor="@color/white"
-        android:textStyle="bold|italic"
-        android:gravity="center"
         android:textSize="20sp"
-        android:background="#3a779b"
-        android:shadowColor="@color/black"
-        android:shadowRadius="2"
-        android:shadowDx="1"
-        android:shadowDy="1"/>
+        android:textStyle="bold|italic" />
 
     <com.ornach.nobobutton.NoboButton
+        android:id="@+id/lock"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:id="@+id/lock"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/tv_lockScreen"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="10dp"
-        app:nb_text="Lock Screen"
+        android:layout_marginTop="15dp"
+        app:nb_backgroundColor="#607D8B"
         app:nb_borderColor="#96cfe0"
         app:nb_borderWidth="2dp"
-        app:nb_backgroundColor="#3a779b"
         app:nb_focusColor="#113355"
+        app:nb_radius="5dp"
+        app:nb_text="Lock Screen"
         app:nb_textColor="#FFF"
         app:nb_textSize="15sp"
-        app:nb_textStyle="bold"
-        app:nb_radius="5dp"/>
+        app:nb_textStyle="bold" />
 
+    </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

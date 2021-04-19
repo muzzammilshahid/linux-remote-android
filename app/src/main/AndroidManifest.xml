@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MuteControl"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MicActivity"></activity>
         <activity android:name=".SoundActivity" />
         <activity android:name=".ImageFullscreen" />
         <activity android:name=".FirstScreen">

@@ -3,14 +3,14 @@ package com.example.mutecontrol;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ProgressBar;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.ornach.nobobutton.NoboButton;
 
 import org.json.JSONException;
@@ -24,12 +24,13 @@ import pk.codebase.requests.HttpRequest;
 public class MainActivity extends AppCompatActivity {
 
     NoboButton muteMicBtn, unmuteMicBtn, showScreen, lock, mute;
-    ProgressBar pb;
+//    ProgressBar pb;
     ProgressDialog progressDialog;
     String url, brightnessUrl;
     String link;
     SeekBar seekBar,seekBarSound, seekBarMic;
-    TextView percent, plugin, timeRemaining, timeToFull;
+    TextView percent;
+    ImageView muteImageView,micImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         url = "http://" + getIntent().getStringExtra("ip") + ":" + getIntent().getStringExtra("port") + "/api/";
         brightnessUrl = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightness";
 
-        pb = findViewById(R.id.pb);
+//        pb = findViewById(R.id.pb);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Please connect with computer...");
@@ -53,11 +54,11 @@ public class MainActivity extends AppCompatActivity {
         seekBarMic= findViewById(R.id.seekBarMic);
 
         showScreen = findViewById(R.id.btn_showscreen);
+        muteImageView = findViewById(R.id.mute_img);
+        micImageView = findViewById(R.id.imageView_mic);
 
         percent = findViewById(R.id.percent);
-        plugin = findViewById(R.id.plugin);
-        timeRemaining = findViewById(R.id.time_remaining);
-        timeToFull = findViewById(R.id.time_to_full);
+//        plugin = findViewById(R.id.plugin);
 
 
         link = getIntent().getStringExtra("link");
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         lock.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
             isLocked();
         });
 
@@ -96,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         mute.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
             isMute();
             if (mute.getText().trim().equals("Mute")) {
                 setMute();
@@ -106,12 +107,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         muteMicBtn.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
             setMicMute();
         });
 
         unmuteMicBtn.setOnClickListener(v -> {
-            pb.setVisibility(View.VISIBLE);
+//            pb.setVisibility(View.VISIBLE);
             setMicUnMute();
         });
 
@@ -179,7 +180,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setLock() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> pb.setVisibility(View.INVISIBLE));
+        request.setOnResponseListener(response -> {
+//            pb.setVisibility(View.INVISIBLE);
+        });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
@@ -189,7 +192,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUnLock() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> pb.setVisibility(View.INVISIBLE));
+        request.setOnResponseListener(response -> {
+//            pb.setVisibility(View.INVISIBLE);
+        });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
@@ -231,12 +236,15 @@ public class MainActivity extends AppCompatActivity {
             System.out.println("This is"+ response.toJSONObject());
             JSONObject responseJson = response.toJSONObject();
             try {
-                if (responseJson.get("plugin_info").equals(true)){
-                    timeToFull.setText("Time to Full: ");
-                }
-                percent.setText(responseJson.get("percentage").toString());
-                plugin.setText(responseJson.get("plugin_info").toString());
-                timeRemaining.setText(responseJson.get("battery_time_left").toString());
+//                System.out.println("Thiss  "+responseJson.get("plugin_info"));
+//                if (responseJson.get("plugin_info").equals(true)){
+//
+//                    plugin.setText("Yes");
+//                } else if (responseJson.get("plugin_info").equals(false)){
+//                    plugin.setText("No");
+//                }
+                percent.setText(responseJson.get("percentage").toString()+" %");
+//                plugin.setText(responseJson.get("plugin_info").toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -250,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
     private void setMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            pb.setVisibility(View.INVISIBLE);
-//            Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
+//            pb.setVisibility(View.INVISIBLE);
+            Glide.with(this).load(R.drawable.mute).into(muteImageView);
             mute.setText("Unmute");
         });
 
@@ -264,9 +272,9 @@ public class MainActivity extends AppCompatActivity {
     private void setUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-//            Glide.with(this).load(R.drawable.unmute).into(imageViewMuteStatus);
+            Glide.with(this).load(R.drawable.unmute).into(muteImageView);
             mute.setText("Mute");
-            pb.setVisibility(View.INVISIBLE);
+//            pb.setVisibility(View.INVISIBLE);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
@@ -281,10 +289,11 @@ public class MainActivity extends AppCompatActivity {
             JSONObject state = response.toJSONObject();
             if (state.optBoolean("is_muted")) {
 
-//                Glide.with(this).load(R.drawable.mute).into(imageViewMuteStatus);
+                Glide.with(this).load(R.drawable.mute).into(muteImageView);
                 mute.setText("Unmute");
             } else {
 
+                Glide.with(this).load(R.drawable.unmute).into(muteImageView);
                 mute.setText("Mute");
             }
         });
@@ -318,8 +327,8 @@ public class MainActivity extends AppCompatActivity {
     private void setMicMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            pb.setVisibility(View.INVISIBLE);
-//            Glide.with(this).load(R.drawable.mic_mute).into(imageViewMuteStatus);
+//            pb.setVisibility(View.INVISIBLE);
+            Glide.with(this).load(R.drawable.mic_mute).into(micImageView);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
@@ -331,8 +340,8 @@ public class MainActivity extends AppCompatActivity {
     private void setMicUnMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-//            Glide.with(this).load(R.drawable.mic_unmute).into(imageViewMuteStatus);
-            pb.setVisibility(View.INVISIBLE);
+            Glide.with(this).load(R.drawable.mic_up).into(micImageView);
+//            pb.setVisibility(View.INVISIBLE);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
