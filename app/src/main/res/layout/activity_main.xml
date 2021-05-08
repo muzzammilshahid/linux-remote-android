@@ -32,6 +32,7 @@
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:text="Battery Percentage:"
+                android:gravity="center"
                 android:textColor="@color/black"
                 android:padding="7dp"
                 android:textSize="16sp"

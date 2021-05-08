@@ -34,7 +34,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     private WiFi mWiFi;
     private AlertDialog mDialog;
     private ListView mListView;
-    private Map<String, ArrayList<Service>> listHashMap;
+    private ArrayList<Service> listHashMap;
     private TypeAdapter myAdapter;
     private ProgressDialog progressDialog;
     private int selectedPosition = -1;
@@ -54,7 +54,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         mDialog = createDialog();
         mListView = findViewById(R.id.listview);
         mListView.setOnItemClickListener(this);
-        listHashMap = new HashMap<>();
+        listHashMap = new ArrayList<>();
         myAdapter = new TypeAdapter(this, listHashMap);
         mListView.setAdapter(myAdapter);
         progressDialog = new ProgressDialog(this);
@@ -112,27 +112,16 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onFound(String type, Service service) {
         System.out.println("Found: " + type + ": " + service.getHostName()+" "+service.getHostIP());
-        ArrayList<Service> services = listHashMap.getOrDefault(type, new ArrayList<>());
-
-        for(Service serv :services){
-            if (service.equalsIP(serv.getHostIP())){
-                System.out.println("Found123  "+serv.equalsIP(service.getHostIP())+"      ");
-            }
-        }
-//        if (service.equalsIP(service.getHostIP())){
-//            System.out.println("Found  "+service.equalsIP(service.getHostIP()));
-//            services.add(service);
-//            progressDialog.dismiss();
-//            listHashMap.put(type, services);
-//        }
-        services.add(service);
+        listHashMap.add(service);
         progressDialog.dismiss();
-        listHashMap.put(type, services);
+        if (foreground) {
+            myAdapter.notifyDataSetChanged();
+        }
         if (foreground) {
             myAdapter.notifyDataSetChanged();
         }
         if (selectedPosition != -1) {
-            ArrayList<Service> serviceArrayList = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
+            ArrayList<Service> serviceArrayList = listHashMap;
             Intent intent1 = new Intent("com.update");
             intent1.putExtra("items", serviceArrayList);
             sendBroadcast(intent1);
@@ -142,7 +131,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onLost(String type, String name) {
         Log.i("TAG", " on lost");
-        ArrayList<Service> services = listHashMap.get(type);
+        ArrayList<Service> services = listHashMap;
         List<Service> toRemove = new ArrayList<>();
         for (Service service : services) {
             if (service.getHostName().equals(name)) {
@@ -152,10 +141,9 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         for (Service service: toRemove) {
             services.remove(service);
         }
-        listHashMap.put(type, services);
         myAdapter.notifyDataSetChanged();
         if (selectedPosition != -1) {
-            ArrayList<Service> serviceArrayList = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
+            ArrayList<Service> serviceArrayList = listHashMap;
             Intent intent1 = new Intent("com.update");
             intent1.putExtra("items", serviceArrayList);
             sendBroadcast(intent1);
@@ -183,7 +171,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectedPosition = position;
-        ArrayList<Service> services = listHashMap.get(listHashMap.keySet().toArray()[selectedPosition]);
+        ArrayList<Service> services = listHashMap;
         Service mdatamodels = services.get(position);
         String port = String.valueOf(mdatamodels.getPort());
         String ip = mdatamodels.getHostIP();

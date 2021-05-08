@@ -18,9 +18,9 @@ import java.util.Map;
 public class TypeAdapter extends ArrayAdapter<String> {
 
     private Activity mActivity;
-    private Map<String, ArrayList<Service>> dataModels;
+    private ArrayList<Service> dataModels;
 
-    TypeAdapter(Activity mActivity, Map<String, ArrayList<Service>> dataModels) {
+    TypeAdapter(Activity mActivity, ArrayList<Service> dataModels) {
         super(mActivity.getApplicationContext(), R.layout.types_group);
         this.mActivity = mActivity;
         this.dataModels = dataModels;
@@ -42,7 +42,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
             viewHolder = (ViewHolder) convertView.getTag();
             Log.i("TAG", " using old one");
         }
-        viewHolder.type.setText(dataModels.get(getItem(position)).get(position).getHostName());
+        viewHolder.type.setText(dataModels.get(position).getHostName());
 
         convertView.setFocusable(false);
         return convertView;
@@ -56,7 +56,7 @@ public class TypeAdapter extends ArrayAdapter<String> {
     @Nullable
     @Override
     public String getItem(int position) {
-        return (String) dataModels.keySet().toArray()[position];
+        return (String) dataModels.get(position).getHostName();
     }
 
     class ViewHolder{
