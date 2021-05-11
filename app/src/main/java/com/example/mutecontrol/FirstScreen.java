@@ -34,8 +34,8 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     private WiFi mWiFi;
     private AlertDialog mDialog;
     private ListView mListView;
-    private ArrayList<Service> listHashMap;
-    private TypeAdapter myAdapter;
+    private ArrayList<Service> arrayListService;
+    private ServiceAdapter myAdapter;
     private ProgressDialog progressDialog;
     private int selectedPosition = -1;
     private boolean foreground = false;
@@ -54,8 +54,8 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         mDialog = createDialog();
         mListView = findViewById(R.id.listview);
         mListView.setOnItemClickListener(this);
-        listHashMap = new ArrayList<>();
-        myAdapter = new TypeAdapter(this, listHashMap);
+        arrayListService = new ArrayList<>();
+        myAdapter = new ServiceAdapter(this, arrayListService);
         mListView.setAdapter(myAdapter);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -112,7 +112,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onFound(String type, Service service) {
         System.out.println("Found: " + type + ": " + service.getHostName()+" "+service.getHostIP());
-        listHashMap.add(service);
+        arrayListService.add(service);
         progressDialog.dismiss();
         if (foreground) {
             myAdapter.notifyDataSetChanged();
@@ -121,7 +121,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
             myAdapter.notifyDataSetChanged();
         }
         if (selectedPosition != -1) {
-            ArrayList<Service> serviceArrayList = listHashMap;
+            ArrayList<Service> serviceArrayList = arrayListService;
             Intent intent1 = new Intent("com.update");
             intent1.putExtra("items", serviceArrayList);
             sendBroadcast(intent1);
@@ -131,7 +131,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onLost(String type, String name) {
         Log.i("TAG", " on lost");
-        ArrayList<Service> services = listHashMap;
+        ArrayList<Service> services = arrayListService;
         List<Service> toRemove = new ArrayList<>();
         for (Service service : services) {
             if (service.getHostName().equals(name)) {
@@ -143,7 +143,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         }
         myAdapter.notifyDataSetChanged();
         if (selectedPosition != -1) {
-            ArrayList<Service> serviceArrayList = listHashMap;
+            ArrayList<Service> serviceArrayList = arrayListService;
             Intent intent1 = new Intent("com.update");
             intent1.putExtra("items", serviceArrayList);
             sendBroadcast(intent1);
@@ -171,7 +171,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         selectedPosition = position;
-        ArrayList<Service> services = listHashMap;
+        ArrayList<Service> services = arrayListService;
         Service mdatamodels = services.get(position);
         String port = String.valueOf(mdatamodels.getPort());
         String ip = mdatamodels.getHostIP();

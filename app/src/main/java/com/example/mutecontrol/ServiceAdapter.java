@@ -15,12 +15,12 @@ import androidx.annotation.RequiresApi;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class TypeAdapter extends ArrayAdapter<String> {
+public class ServiceAdapter extends ArrayAdapter<String> {
 
     private Activity mActivity;
     private ArrayList<Service> dataModels;
 
-    TypeAdapter(Activity mActivity, ArrayList<Service> dataModels) {
+    ServiceAdapter(Activity mActivity, ArrayList<Service> dataModels) {
         super(mActivity.getApplicationContext(), R.layout.types_group);
         this.mActivity = mActivity;
         this.dataModels = dataModels;
