@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity {
             isLocked();
         });
 
+        isLocked1();
+
         getBrightness();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -171,6 +173,21 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 setLock();
                 lock.setText("Unlock Screen");
+            }
+        });
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+
+        request.get(url+"lock");
+    }
+
+    public void isLocked1(){
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            JSONObject state = response.toJSONObject();
+            if (state.optBoolean("is_locked")) {
+                lock.setText("Unlock Screen");
+            } else {
+                lock.setText("Lock Screen");
             }
         });
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
