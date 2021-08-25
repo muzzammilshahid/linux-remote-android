@@ -34,6 +34,7 @@ public class WiFi {
 
     public interface StateListener {
         void onConnect(String ip);
+
         void onDisconnect();
     }
 
@@ -51,7 +52,7 @@ public class WiFi {
     private String getNetworkIP(Network network) {
         LinkProperties properties = mCManager.getLinkProperties(network);
         List<LinkAddress> addresses = properties.getLinkAddresses();
-        for (LinkAddress linkAddress: addresses) {
+        for (LinkAddress linkAddress : addresses) {
             if (linkAddress.getAddress() instanceof Inet4Address) {
                 return linkAddress.getAddress().getHostName();
             }

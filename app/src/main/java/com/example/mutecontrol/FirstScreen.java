@@ -63,15 +63,9 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         progressDialog.show();
         mFinder = new ServiceFinder(getApplicationContext());
         mFinder.addServiceListener(this);
-//        mFinder.discoverAll();
         mFinder.discover("_http._tcp.local.");
 
         deviceId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-
-
-
-
-
 
 
         Intent intent1 = getIntent();
@@ -111,7 +105,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onFound(String type, Service service) {
-        System.out.println("Found: " + type + ": " + service.getHostName()+" "+service.getHostIP());
+        System.out.println("Found: " + type + ": " + service.getHostName() + " " + service.getHostIP());
         arrayListService.add(service);
         progressDialog.dismiss();
         if (foreground) {
@@ -138,7 +132,7 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
                 toRemove.add(service);
             }
         }
-        for (Service service: toRemove) {
+        for (Service service : toRemove) {
             services.remove(service);
         }
         myAdapter.notifyDataSetChanged();
@@ -176,63 +170,61 @@ public class FirstScreen extends AppCompatActivity implements ServiceFinder.Serv
         String port = String.valueOf(mdatamodels.getPort());
         String ip = mdatamodels.getHostIP();
         checkDevice(ip, port);
-     }
+    }
 
-     public void getOtp(String ip, String port){
-         HttpRequest request = new HttpRequest();
-         request.setOnResponseListener(response -> Toast.makeText(this, "Check the OTP on your Computer", Toast.LENGTH_SHORT).show());
+    public void getOtp(String ip, String port) {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> Toast.makeText(this, "Check the OTP on your Computer", Toast.LENGTH_SHORT).show());
 
-         request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please Connect your computer", Toast.LENGTH_SHORT).show());
-         request.get("http://" + ip + ":"+port+"/api/pair/");
-     }
+        request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please Connect your computer", Toast.LENGTH_SHORT).show());
+        request.get("http://" + ip + ":" + port + "/api/pair/");
+    }
 
-     public void checkOtp(String otp, String ip, String port, Dialog dialog){
-         HttpRequest request1 = new HttpRequest();
-         request1.setOnResponseListener(response1 -> {
-             if (response1.text.trim().equals("true")){
-                 checkDevice(ip, port);
-                 dialog.dismiss();
-             }
-             else {
-                 Toast.makeText(this, "OPT is correct", Toast.LENGTH_SHORT).show();
-             }
-         });
+    public void checkOtp(String otp, String ip, String port, Dialog dialog) {
+        HttpRequest request1 = new HttpRequest();
+        request1.setOnResponseListener(response1 -> {
+            if (response1.text.trim().equals("true")) {
+                checkDevice(ip, port);
+                dialog.dismiss();
+            } else {
+                Toast.makeText(this, "OPT is correct", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-         request1.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect your computer", Toast.LENGTH_SHORT).show());
-         Map<String, String> data1 = new HashMap<>();
-         data1.put("device_id",deviceId);
-         data1.put("otp", otp);
-         request1.post("http://" + ip + ":"+port+"/api/pair/", data1);
-     }
-
+        request1.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect your computer", Toast.LENGTH_SHORT).show());
+        Map<String, String> data1 = new HashMap<>();
+        data1.put("device_id", deviceId);
+        data1.put("otp", otp);
+        request1.post("http://" + ip + ":" + port + "/api/pair/", data1);
+    }
 
 
-     public void checkDevice(String ip, String port){
-         HttpRequest request = new HttpRequest();
-         request.setOnResponseListener(response -> {
-             if (response.text.trim().equals("true")){
-                 Intent intent = new Intent(FirstScreen.this,MainActivity.class);
-                 intent.putExtra("ip", ip);
-                 intent.putExtra("port",port);
-                 intent.putExtra("link",sharedText);
-                 startActivity(intent);
-             } else {
-                 getOtp(ip,port);
-                 Dialog dialog = new Dialog(this);
-                 dialog.setContentView(R.layout.dialog_verify);
-                 int width = WindowManager.LayoutParams.MATCH_PARENT;
-                 int height = WindowManager.LayoutParams.WRAP_CONTENT;
-                 dialog.getWindow().setLayout(width,height);
-                 dialog.show();
-                 EditText otp = dialog.findViewById(R.id.otp);
-                 Button verify = dialog.findViewById(R.id.bt_verify);
-                 verify.setOnClickListener(v -> checkOtp(otp.getText().toString().trim(),ip,port,dialog));
-             }
-         });
+    public void checkDevice(String ip, String port) {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> {
+            if (response.text.trim().equals("true")) {
+                Intent intent = new Intent(FirstScreen.this, MainActivity.class);
+                intent.putExtra("ip", ip);
+                intent.putExtra("port", port);
+                intent.putExtra("link", sharedText);
+                startActivity(intent);
+            } else {
+                getOtp(ip, port);
+                Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.dialog_verify);
+                int width = WindowManager.LayoutParams.MATCH_PARENT;
+                int height = WindowManager.LayoutParams.WRAP_CONTENT;
+                dialog.getWindow().setLayout(width, height);
+                dialog.show();
+                EditText otp = dialog.findViewById(R.id.otp);
+                Button verify = dialog.findViewById(R.id.bt_verify);
+                verify.setOnClickListener(v -> checkOtp(otp.getText().toString().trim(), ip, port, dialog));
+            }
+        });
 
-         request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
-         Map<String, String> data = new HashMap<>();
-         data.put("device_id",deviceId);
-         request.post("http://" + ip + ":"+port+"/api/verify/", data);
-     }
+        request.setOnErrorListener(error -> Toast.makeText(FirstScreen.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        Map<String, String> data = new HashMap<>();
+        data.put("device_id", deviceId);
+        request.post("http://" + ip + ":" + port + "/api/verify/", data);
+    }
 }

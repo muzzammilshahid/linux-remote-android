@@ -27,7 +27,6 @@ import javax.jmdns.ServiceTypeListener;
 public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, ServiceListener {
 
     private static final int PENDING_TYPE_NONE = 0;
-    private static final int PENDING_TYPE_ALL = 1;
     private static final int PENDING_TYPE_ONE = 2;
 
     private JmDNS mDNS;
@@ -62,6 +61,7 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
 
     public interface ServiceListener {
         void onFound(String type, Service service);
+
         void onLost(String type, String name);
     }
 
@@ -73,30 +73,6 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
     public void removeServiceListener(ServiceListener listener) {
         mListeners.remove(listener);
     }
-
-//    public void discoverAll() {
-//        if (mPendingType != PENDING_TYPE_NONE) {
-//            return;
-//        }
-//        if (mWiFi.hasIP()) {
-//            discoverAll(mWiFi.getIP());
-//        } else {
-//            mPendingType = PENDING_TYPE_ALL;
-//        }
-//    }
-
-//    private void discoverAll(String ip) {
-//        mExecutor.submit(() -> {
-//            try {
-//                grabMulticastLock();
-//                mDNS = JmDNS.create(InetAddress.getByName(ip), getClass().getName());
-//                mDNS.addServiceTypeListener(this);
-//            } catch (IOException e) {
-//                releaseMulticastLock();
-//                e.printStackTrace();
-//            }
-//        });
-//    }
 
     public void discover(String type) {
         if (mPendingType != PENDING_TYPE_NONE) {
@@ -138,9 +114,6 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
         if (mPendingType == PENDING_TYPE_ONE) {
             discover(mQueuedType, ip);
         }
-//        else if (mPendingType == PENDING_TYPE_ALL) {
-//            discoverAll(ip);
-//        }
         mPendingType = PENDING_TYPE_NONE;
     }
 
@@ -157,17 +130,19 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
     }
 
     @Override
-    public void subTypeForServiceTypeAdded(ServiceEvent event) {}
+    public void subTypeForServiceTypeAdded(ServiceEvent event) {
+    }
 
     @Override
-    public void serviceAdded(ServiceEvent event) {}
+    public void serviceAdded(ServiceEvent event) {
+    }
 
     @Override
     public void serviceRemoved(ServiceEvent event) {
         String type = event.getType();
         String name = event.getName();
         Handler handler = new Handler(Looper.getMainLooper());
-        for (ServiceListener listener: mListeners) {
+        for (ServiceListener listener : mListeners) {
             handler.post(() -> listener.onLost(type, name));
         }
     }
@@ -185,7 +160,7 @@ public class ServiceFinder implements WiFi.StateListener, ServiceTypeListener, S
         String host = info.getInet4Addresses()[0].getHostAddress();
         Service service = new Service(event.getName(), host, info.getPort(), properties);
         Handler handler = new Handler(Looper.getMainLooper());
-        for (ServiceListener listener: mListeners) {
+        for (ServiceListener listener : mListeners) {
             handler.post(() -> listener.onFound(type, service));
         }
     }

@@ -24,13 +24,12 @@ import pk.codebase.requests.HttpRequest;
 public class MainActivity extends AppCompatActivity {
 
     NoboButton muteMicBtn, unmuteMicBtn, showScreen, lock, mute;
-//    ProgressBar pb;
     ProgressDialog progressDialog;
     String url, brightnessUrl;
     String link;
-    SeekBar seekBar,seekBarSound, seekBarMic;
+    SeekBar seekBar, seekBarSound, seekBarMic;
     TextView percent;
-    ImageView muteImageView,micImageView;
+    ImageView muteImageView, micImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
         url = "http://" + getIntent().getStringExtra("ip") + ":" + getIntent().getStringExtra("port") + "/api/";
         brightnessUrl = "http://" + getIntent().getStringExtra("ip") + ":8520/api/brightness";
 
-//        pb = findViewById(R.id.pb);
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Please connect with computer...");
@@ -49,16 +47,15 @@ public class MainActivity extends AppCompatActivity {
         lock = findViewById(R.id.lock);
         muteMicBtn = findViewById(R.id.muteMicbtn);
         unmuteMicBtn = findViewById(R.id.unmuteMicbtn);
-        seekBar= findViewById(R.id.seekBar);
-        seekBarSound= findViewById(R.id.seekBarSound);
-        seekBarMic= findViewById(R.id.seekBarMic);
+        seekBar = findViewById(R.id.seekBar);
+        seekBarSound = findViewById(R.id.seekBarSound);
+        seekBarMic = findViewById(R.id.seekBarMic);
 
         showScreen = findViewById(R.id.btn_showscreen);
         muteImageView = findViewById(R.id.mute_img);
         micImageView = findViewById(R.id.imageView_mic);
 
         percent = findViewById(R.id.percent);
-//        plugin = findViewById(R.id.plugin);
 
 
         link = getIntent().getStringExtra("link");
@@ -68,14 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
         showScreen.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ImageFullscreen.class);
-            intent.putExtra("url",url);
+            intent.putExtra("url", url);
             startActivity(intent);
         });
 
-        lock.setOnClickListener(v -> {
-//            pb.setVisibility(View.VISIBLE);
-            isLocked();
-        });
+        lock.setOnClickListener(v -> isLocked());
 
         isLocked1();
 
@@ -99,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         mute.setOnClickListener(v -> {
-//            pb.setVisibility(View.VISIBLE);
             isMute();
             if (mute.getText().trim().equals("Mute")) {
                 setMute();
@@ -108,15 +101,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        muteMicBtn.setOnClickListener(v -> {
-//            pb.setVisibility(View.VISIBLE);
-            setMicMute();
-        });
+        muteMicBtn.setOnClickListener(v -> setMicMute());
 
-        unmuteMicBtn.setOnClickListener(v -> {
-//            pb.setVisibility(View.VISIBLE);
-            setMicUnMute();
-        });
+        unmuteMicBtn.setOnClickListener(v -> setMicUnMute());
 
 
         isMute();
@@ -177,10 +164,10 @@ public class MainActivity extends AppCompatActivity {
         });
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
 
-        request.get(url+"lock");
+        request.get(url + "lock");
     }
 
-    public void isLocked1(){
+    public void isLocked1() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             JSONObject state = response.toJSONObject();
@@ -192,44 +179,42 @@ public class MainActivity extends AppCompatActivity {
         });
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
 
-        request.get(url+"lock");
+        request.get(url + "lock");
     }
 
     private void setLock() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-//            pb.setVisibility(View.INVISIBLE);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_lock", 1);
-        request.post(url+"lock", data);
+        request.post(url + "lock", data);
     }
 
     private void setUnLock() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-//            pb.setVisibility(View.INVISIBLE);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_lock", 0);
-        request.post(url+"lock", data);
+        request.post(url + "lock", data);
     }
 
-    private void openLink(String link){
-            HttpRequest request = new HttpRequest();
-            request.setOnResponseListener(response -> System.out.println(response.toJSONObject()));
+    private void openLink(String link) {
+        HttpRequest request = new HttpRequest();
+        request.setOnResponseListener(response -> System.out.println(response.toJSONObject()));
 
-            request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
-            Map<String, String> data = new HashMap<>();
-            data.put("link", link);
-            request.post(url+"open", data);
+        request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
+        Map<String, String> data = new HashMap<>();
+        data.put("link", link);
+        request.post(url + "open", data);
     }
 
-    private void getBrightness(){
+    private void getBrightness() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> seekBar.setProgress(Integer.parseInt(response.text.trim())));
 
@@ -237,45 +222,36 @@ public class MainActivity extends AppCompatActivity {
         request.get(brightnessUrl);
     }
 
-    private void setBrightness(int progress){
+    private void setBrightness(int progress) {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> System.out.println("Brightness changes"));
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
-        Map<String,Integer> data = new HashMap<>();
+        Map<String, Integer> data = new HashMap<>();
         data.put("brightness", progress);
         request.post(brightnessUrl, data);
     }
 
-    private void getBatteryInfo(){
+    private void getBatteryInfo() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-            System.out.println("This is"+ response.toJSONObject());
+            System.out.println("This is" + response.toJSONObject());
             JSONObject responseJson = response.toJSONObject();
             try {
-//                System.out.println("Thiss  "+responseJson.get("plugin_info"));
-//                if (responseJson.get("plugin_info").equals(true)){
-//
-//                    plugin.setText("Yes");
-//                } else if (responseJson.get("plugin_info").equals(false)){
-//                    plugin.setText("No");
-//                }
-                percent.setText(responseJson.get("percentage").toString()+" %");
-//                plugin.setText(responseJson.get("plugin_info").toString());
+                percent.setText(responseJson.get("percentage").toString() + " %");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
-        request.get(url+"battery");
+        request.get(url + "battery");
 
     }
 
     private void setMute() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
-//            pb.setVisibility(View.INVISIBLE);
             Glide.with(this).load(R.drawable.mute).into(muteImageView);
             mute.setText("Unmute");
         });
@@ -283,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 1);
-        request.post(url+"volume", data);
+        request.post(url + "volume", data);
     }
 
     private void setUnMute() {
@@ -291,13 +267,12 @@ public class MainActivity extends AppCompatActivity {
         request.setOnResponseListener(response -> {
             Glide.with(this).load(R.drawable.unmute).into(muteImageView);
             mute.setText("Mute");
-//            pb.setVisibility(View.INVISIBLE);
         });
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect to your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 0);
-        request.post(url+"volume", data);
+        request.post(url + "volume", data);
     }
 
     private void isMute() {
@@ -316,20 +291,20 @@ public class MainActivity extends AppCompatActivity {
         });
         request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
-        request.get(url+"volume");
+        request.get(url + "volume");
     }
 
     private void setVolume(int vol) {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
+        request.setOnResponseListener(response -> System.out.println("This" + response.toJSONObject()));
         request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);
-        request.post(url+"vol", data);
+        request.post(url + "vol", data);
     }
 
-    private void currentVolume(){
+    private void currentVolume() {
         HttpRequest request = new HttpRequest();
         request.setOnResponseListener(response -> {
             System.out.println("This" + response.text);
@@ -337,45 +312,39 @@ public class MainActivity extends AppCompatActivity {
         });
         request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
-        request.get(url+"vol");
+        request.get(url + "vol");
     }
 
 
     private void setMicMute() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-//            pb.setVisibility(View.INVISIBLE);
-            Glide.with(this).load(R.drawable.mic_mute).into(micImageView);
-        });
+        request.setOnResponseListener(response -> Glide.with(this).load(R.drawable.mic_mute).into(micImageView));
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 1);
-        request.post(url+"mic/mute", data);
+        request.post(url + "mic/mute", data);
     }
 
     private void setMicUnMute() {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> {
-            Glide.with(this).load(R.drawable.mic_up).into(micImageView);
-//            pb.setVisibility(View.INVISIBLE);
-        });
+        request.setOnResponseListener(response -> Glide.with(this).load(R.drawable.mic_up).into(micImageView));
 
         request.setOnErrorListener(error -> Toast.makeText(MainActivity.this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
         Map<String, Integer> data = new HashMap<>();
         data.put("set_mute", 0);
-        request.post(url+"mic/mute", data);
+        request.post(url + "mic/mute", data);
     }
 
 
     private void setMicVolume(int vol) {
         HttpRequest request = new HttpRequest();
-        request.setOnResponseListener(response -> System.out.println("This"+response.toJSONObject()));
+        request.setOnResponseListener(response -> System.out.println("This" + response.toJSONObject()));
         request.setOnErrorListener(error -> Toast.makeText(this, "Please connect with your computer", Toast.LENGTH_SHORT).show());
 
         Map<String, Integer> data = new HashMap<>();
         data.put("volume", vol);
-        request.post(url+"mic/vol", data);
+        request.post(url + "mic/vol", data);
     }
 
 

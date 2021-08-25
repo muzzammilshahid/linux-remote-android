@@ -22,14 +22,14 @@ public class ImageFullscreen extends AppCompatActivity {
         refreshBtn = findViewById(R.id.refresh_btn);
 
         Glide.with(this).
-                load(getIntent().getStringExtra("url")+"screenshot")
+                load(getIntent().getStringExtra("url") + "screenshot")
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(imageView);
 
 
         refreshBtn.setOnClickListener(v -> Glide.with(this).
-                load(getIntent().getStringExtra("url")+"screenshot")
+                load(getIntent().getStringExtra("url") + "screenshot")
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
                 .into(imageView));

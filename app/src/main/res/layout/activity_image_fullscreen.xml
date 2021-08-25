@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ImageFullscreen">
 
     <ImageView
+        android:id="@+id/fullscreen_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:id="@+id/fullscreen_image"
-        android:scaleType="fitCenter"/>
+        android:scaleType="fitCenter" />
 
     <com.ornach.nobobutton.NoboButton
+        android:id="@+id/refresh_btn"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        app:nb_text="Refresh"
         android:layout_below="@+id/fullscreen_image"
-        android:id="@+id/refresh_btn"
-        android:layout_marginTop="20dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        app:nb_backgroundColor="#3a779b"
         app:nb_borderColor="#96cfe0"
         app:nb_borderWidth="2dp"
-        app:nb_backgroundColor="#3a779b"
         app:nb_focusColor="#113355"
+        app:nb_radius="5dp"
+        app:nb_text="Refresh"
         app:nb_textColor="#FFF"
         app:nb_textSize="15sp"
-        app:nb_textStyle="bold"
-        app:nb_radius="5dp"/>
+        app:nb_textStyle="bold" />
 
 </RelativeLayout>

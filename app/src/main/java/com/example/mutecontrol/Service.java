@@ -1,9 +1,5 @@
 package com.example.mutecontrol;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -32,15 +28,4 @@ public class Service implements Serializable {
         return mPort;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public String getProperty(String name) {
-        return mProperties.getOrDefault(name, null);
-    }
-
-    public boolean equalsIP(String ip){
-        if (ip.equals(mHostIP)){
-            return false;
-        }
-        return true;
-    }
 }

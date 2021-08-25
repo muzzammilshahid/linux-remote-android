@@ -13,17 +13,16 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 public class ServiceAdapter extends ArrayAdapter<String> {
 
     private Activity mActivity;
-    private ArrayList<Service> dataModels;
+    private ArrayList<Service> serviceArrayList;
 
-    ServiceAdapter(Activity mActivity, ArrayList<Service> dataModels) {
-        super(mActivity.getApplicationContext(), R.layout.types_group);
+    ServiceAdapter(Activity mActivity, ArrayList<Service> serviceArrayList) {
+        super(mActivity.getApplicationContext(), R.layout.list_item);
         this.mActivity = mActivity;
-        this.dataModels = dataModels;
+        this.serviceArrayList = serviceArrayList;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -32,17 +31,17 @@ public class ServiceAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = mActivity.getLayoutInflater().inflate(R.layout.types_group, parent,
+            convertView = mActivity.getLayoutInflater().inflate(R.layout.list_item, parent,
                     false);
             viewHolder = new ViewHolder();
-            viewHolder.type = convertView.findViewById(R.id.type);
+            viewHolder.textView = convertView.findViewById(R.id.textView);
             convertView.setTag(viewHolder);
             Log.i("TAG", " creating new");
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
             Log.i("TAG", " using old one");
         }
-        viewHolder.type.setText(dataModels.get(position).getHostName());
+        viewHolder.textView.setText(serviceArrayList.get(position).getHostName());
 
         convertView.setFocusable(false);
         return convertView;
@@ -50,16 +49,16 @@ public class ServiceAdapter extends ArrayAdapter<String> {
 
     @Override
     public int getCount() {
-        return dataModels.size();
+        return serviceArrayList.size();
     }
 
     @Nullable
     @Override
     public String getItem(int position) {
-        return (String) dataModels.get(position).getHostName();
+        return serviceArrayList.get(position).getHostName();
     }
 
-    class ViewHolder{
-        TextView type;
+    class ViewHolder {
+        TextView textView;
     }
 }
